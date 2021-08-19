@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+int cont = 0;
 class AFD{
     private:         
         vector<string> _estados, _alfabeto;        
@@ -125,8 +125,11 @@ void verificarPalabra(AFD *&afd){
 }
 
 void FuncionTransicion::hacerSigTransicion(string& pal){
-    auto auxE = _afd->getEstadoActual();
-    
+    string auxE;
+    if(cont == 0){
+        auxE = _afd->getEstadoActual();
+        cont++;
+    }
     if(pal.length()==1){
 
         esPosible(pal) ? cout << "\nSi esta en el lenguaje" << endl : cout << "\nNo esta en el lenguaje" << endl;

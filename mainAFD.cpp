@@ -125,18 +125,26 @@ void verificarPalabra(AFD *&afd){
 }
 
 void FuncionTransicion::hacerSigTransicion(string& pal){
+    auto auxE = _afd->getEstadoActual();
+    
     if(pal.length()==1){
-        esPosible(pal) ? cout << "Si esta en el lenguaje" << endl : cout << "No esta en el lenguaje" << endl;
+
+        esPosible(pal) ? cout << "\nSi esta en el lenguaje" << endl : cout << "\nNo esta en el lenguaje" << endl;
+        _afd->setEstadoActual(auxE);
     }
-    else{                           
+    else{            
+        cout << "   ("<< _afd->getEstadoActual()<< "," << pal[0]<< ") |- ";               
         auto ret = _afd->getTransiciones().find(make_pair(_afd->getEstadoActual(),pal[0]));          
+        cout << " " << ret->second;
         _afd->setEstadoActual(ret->second);    
         pal = pal.substr(1, pal.size());
         hacerSigTransicion(pal);              
     }
 }
-bool FuncionTransicion::esPosible(string& pal){            
+bool FuncionTransicion::esPosible(string& pal){  
+    cout << "   ("<< _afd->getEstadoActual()<< "," << pal[0]<< ") |- ";          
     auto ret = _afd->getTransiciones().find(make_pair(_afd->getEstadoActual(),pal[0]));   
+    cout << " " << ret->second;
     return (ret->second == _afd->getEstadoFinal());
 }
 

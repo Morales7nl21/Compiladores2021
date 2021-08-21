@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Estado{    
+    private:
+        string _nombreEdo;
+        vector<pair<Estado,char>> _sigEdos;
+    public:       
+        Estado(); 
+        Estado(string);
+        vector<pair<Estado,char>>  getSigEdos();
+        void  setSigEdos(vector<pair<Estado,char>> &);
+        string getNombreEdo();
+   
+};
+
+class AFD{
+    private:
+        vector<char> _alfabeto;
+        vector<Estado> _estados;
+        Estado _edoInicial, _edoFinal;
+    public:
+        AFD();
+        AFD(vector<char> , vector<Estado> &, Estado &, Estado &);
+        vector<char> getAlfabeto();
+        vector<Estado> getEstados();
+        Estado getEdoInicial();
+        Estado getEdoFinal();
+
+};
+class Transicion{
+    private:
+        map<pair<string,char>,string> _transiciones;
+        AFD _afd;
+    public:
+        Transicion();
+        Transicion(AFD &);
+        map<pair<string,char>,string> getTransiciones();
+        void setTransiciones(map<pair<string,char>,string> &);
+        void llenaTransiciones();
+
+};
+
+class FuncionTransicion{
+    private:
+        AFD _afd; 
+        string _edoActual;    
+        Transicion _transiciones;           
+        
+    public:
+        FuncionTransicion();
+        FuncionTransicion(AFD &, string &, Transicion &);        
+        
+        bool esPosible(string &);
+        void hacerSigTransicion(string &);     
+
+        void setEstadoActual(string &);   
+        string  getEstadoActual();
+};

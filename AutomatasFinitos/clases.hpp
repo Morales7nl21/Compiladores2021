@@ -17,15 +17,15 @@ class Estado{
 class AFD{
     private:
         vector<char> _alfabeto;
-        vector<Estado> _estados;
-        Estado _edoInicial, _edoFinal;
+        vector<Estado> _estados, _edoFinal;
+        Estado _edoInicial;
     public:
         AFD();
-        AFD(vector<char> , vector<Estado> &, Estado &, Estado &);
+        AFD(vector<char> , vector<Estado> &, Estado &, vector<Estado> &);
         vector<char> getAlfabeto();
         vector<Estado> getEstados();
         Estado getEdoInicial();
-        Estado getEdoFinal();
+        vector<Estado> getEdosFinales();
 
 };
 class Transicion{

@@ -10,10 +10,18 @@ FuncionTransicion::FuncionTransicion(AFD &_afd, string &_edoActual, Transicion &
     this->_transiciones = _transiciones;
 }              
 bool FuncionTransicion::esPosible(string &pal){
+    bool encontroalgunEdoFinal = false;
     cout << "   ("<< _edoActual<< "," << pal[0]<< ") |- ";          
     auto ret = _transiciones.getTransiciones().find(make_pair(_edoActual,pal[0]));   
+    string edoF = ret->second;
     cout << " " << ret->second;
-    return (ret->second == _afd.getEdoFinal().getNombreEdo());
+    for(auto &var : _afd.getEdosFinales())
+    {
+        if(edoF == var.getNombreEdo()){
+            encontroalgunEdoFinal = true;
+        }
+    }
+    return encontroalgunEdoFinal;
 }     
 void FuncionTransicion::hacerSigTransicion(string &pal){
     string auxE;

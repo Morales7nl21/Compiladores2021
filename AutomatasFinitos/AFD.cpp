@@ -3,7 +3,7 @@ using namespace std;
 #include "clases.hpp"
 
 AFD::AFD(){};
-AFD::AFD(vector<char> _alfabeto, vector<Estado> &_estados, Estado &_edoInicial, Estado &_edoFinal){
+AFD::AFD(vector<char> _alfabeto, vector<Estado> &_estados, Estado &_edoInicial, vector<Estado> &_edoFinal){
     this->_alfabeto = _alfabeto;
     this->_estados = _estados;
     this->_edoInicial = _edoInicial;
@@ -18,6 +18,6 @@ vector<Estado> AFD::getEstados(){
 Estado AFD::getEdoInicial(){
     return this->_edoInicial;
 }
-Estado AFD::getEdoFinal(){
+vector<Estado> AFD::getEdosFinales(){
     return this->_edoFinal;
 }

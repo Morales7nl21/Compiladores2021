@@ -19,7 +19,8 @@ vector<char> alfabeto;
 AFD *a;
 vector<Estado> edos;
 Transicion *t;
-Estado final, inicial;
+vector<Estado> final;
+Estado inicial;
 FuncionTransicion *ft;
 
 
@@ -76,7 +77,7 @@ void mostrarUso(){
 }
 void ingresarAutomata(){
     
-    int nalf,nedos , sin, sfin, transicionEdo, op=0;
+    int nalf,nedos , sin, sfin, transicionEdo, op=0, numEdosFin;
     string sedos, sfinal, sinicial;
 
     char c;
@@ -97,8 +98,13 @@ void ingresarAutomata(){
     }
     cout << "Indique cual es el  estado inicial: q";  cin >> sin;
     inicial = edos[sin];
-    cout << "Indique cual es el estado final: q";  cin >> sfin;
-    final = edos[sfin];
+    cout << "Indique el numero de estados finales:";  cin >> numEdosFin;
+    for (int i = 0; i < numEdosFin; i++)
+    {
+        cout << "Indique cual son los  estados finales:  q";  cin >> sfin;
+        final.push_back(edos[sfin]);    
+    }
+        
     cout << "Indique las transiciones de cada estado " << endl;
         
     for(auto & var : edos)

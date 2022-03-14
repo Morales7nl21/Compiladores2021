@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
 #include "clases.hpp"
+using namespace std;
+
 
 Estado::Estado(){};
 Estado::Estado(string _nombreEdo){

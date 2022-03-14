@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
 #include "clases.hpp"
+using namespace std;
+
 int cont = 0;
 
 FuncionTransicion::FuncionTransicion(){};

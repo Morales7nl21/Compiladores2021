@@ -1,6 +1,9 @@
+#include <iostream>
 #include <bits/stdc++.h>
-using namespace std;
 #include "clases.hpp"
+using namespace std;
+
+
 
 AFD::AFD(){};
 AFD::AFD(vector<char> _alfabeto, vector<Estado> &_estados, Estado &_edoInicial, vector<Estado> &_edoFinal){

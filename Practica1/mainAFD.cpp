@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
 #include "clases.hpp"
+using namespace std;
+
 
 #ifdef _WIN32
   #include<windows.h>
@@ -77,7 +79,7 @@ void mostrarUso(){
 }
 void ingresarAutomata(){
     
-    int nalf,nedos , sin, sfin, transicionEdo, op=0, numEdosFin;
+    int nalf, sin, sfin, transicionEdo, op=0, numEdosFin;
     string sedos, sfinal, sinicial;
 
     char c;
@@ -88,8 +90,11 @@ void ingresarAutomata(){
         cin >> c;
         alfabeto.push_back(c);
     }
-    cout << "Ingrese el numero de estados: "; cin  >> nedos;
-    vector<pair<Estado,char>> parestados[nedos];    
+    int nedos ;    
+    cout << "Ingrese el numero de estados: "; cin >> nedos;
+    
+    
+    
     for (int i = 0; i < nedos; i++)
     {
         cout << "ingrese cada estado "<< endl; cin >> sedos;
@@ -109,13 +114,15 @@ void ingresarAutomata(){
         
     for(auto & var : edos)
     {    
+        vector<pair<Estado,char>> parestados;   
         for(auto ca : alfabeto)
         {
                 cout << " Ingrese la transicion  para el estado: " << var.getNombreEdo() << "  con el simbolo:   " << ca <<"  ->  q";   
                 cin >> transicionEdo;                 
-                parestados[op].push_back(make_pair(edos[transicionEdo], ca));
+                parestados.push_back(make_pair(edos[transicionEdo], ca));
         }
-        var.setSigEdos(parestados[op]);
+        var.setSigEdos(parestados);
+        parestados.clear();
         op++;                        
     }
     a = new AFD(alfabeto,edos,inicial,final);

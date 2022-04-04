@@ -100,9 +100,11 @@ void AFN::creaEstadoVacio(string estado, string calf)
     }
 }
 void AFN::muestraTransiciones()
-{
+{   
+    int cont = 0;
     for (auto const &it : nuevas_transiciones)
     {
+        cout << "<Nueva transicion>" << endl;
         for (auto const &s : it)
         {
             cout << "Transicion: " << s << endl;

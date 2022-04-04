@@ -12,6 +12,7 @@ private:
     vector<vector<string>> transicion;
     vector<string> estadosNuevos;
     vector<vector<string>> nuevas_transiciones;
+    bool esTaVacio;
 
 public:
     AFN(auto e, auto ed, auto edf, auto alf, auto tr) : estados(e), edoInicial(ed), estadosFinales(edf), alfabeto(alf), transicion(tr)

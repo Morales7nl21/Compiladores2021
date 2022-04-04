@@ -54,7 +54,7 @@ void AFN::creaAFD(string estadoActual, string calf)
             nuevaTransicionAcrear.push_back(nuevoEdoString);
             nuevas_transiciones.push_back(nuevaTransicionAcrear);
             nuevaTransicionAcrear.clear();
-            estadosNuevos.push_back(nuevoEdoString);            
+            estadosNuevos.push_back(nuevoEdoString);
             for (auto const &ca : alfabeto)
             {
                 creaAFD(nuevoEdoString, ca);
@@ -69,29 +69,35 @@ void AFN::creaAFD(string estadoActual, string calf)
             nuevaTransicionAcrear.clear();
         }
         nuevaTransicionAcrear.clear();
-    }else{
+    }
+    else
+    {
 
         creaEstadoVacio(estadoActual, calf);
     }
 }
-void AFN::creaEstadoVacio(string estado, string calf){
+void AFN::creaEstadoVacio(string estado, string calf)
+{
+
     estadosNuevos.push_back("{}");
-    vector<string> vectEdoVacio {};
+    vector<string> vectEdoVacio{};
     vectEdoVacio.push_back(estado);
     vectEdoVacio.push_back(calf);
     vectEdoVacio.push_back("{}");
     nuevas_transiciones.push_back(vectEdoVacio);
     vectEdoVacio.clear();
-    for (auto const &a : alfabeto)
-    {          
-        vectEdoVacio.push_back("{}");        
-        vectEdoVacio.push_back(a);
-        vectEdoVacio.push_back("{}");
-        nuevas_transiciones.push_back(vectEdoVacio);
-        vectEdoVacio.clear();
+    if (esTaVacio)
+    {
+        for (auto const &a : alfabeto)
+        {
+            vectEdoVacio.push_back("{}");
+            vectEdoVacio.push_back(a);
+            vectEdoVacio.push_back("{}");
+            nuevas_transiciones.push_back(vectEdoVacio);
+            vectEdoVacio.clear();
+        }
+        esTaVacio = false;
     }
-    
-    
 }
 void AFN::muestraTransiciones()
 {

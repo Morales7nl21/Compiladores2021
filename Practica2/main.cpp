@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include "clasesAFN.hpp"
+#include "../Practica1/clases.hpp"
 
 using namespace std;
 
@@ -13,6 +14,8 @@ void leerArchivoAFN();
 void imprimeEstados();
 void imprimeTransiciones();
 void generaAFD();
+void renombraEstados();
+void mandaArchivoAFD();
 archivoAFN* archAFN;
 AFN *afn;
 int main(int argc, char const *argv[])
@@ -28,20 +31,23 @@ void menu(){
         cout << endl <<"0 -> Leer de archivo AFD" << endl; 
         cout << "1 -> genera AFD" << endl;
         cout << "2 -> Muestra Transiciones AFD" << endl;  
-        cout << "2 -> Muestra nuevos estados AFD" << endl;  
-        cout << "3 -> Manda Archivo Transiciones AFD" << endl;
-        cout << "4 -> Salir" << endl;        
+        cout << "3 -> Renombra estados" << endl;
+        cout << "4 -> Muestra nuevos estados AFD" << endl;  
+        cout << "5 -> Manda Archivo Transiciones AFD" << endl;
+        cout << "6 -> Salir" << endl;        
         cin>>k;
         switch (k)
         {        
             case 0: leerArchivoAFN(); break;
             case 1: generaAFD(); break;    
             case 2: imprimeTransiciones();break;
-            case 3: imprimeEstados();break;                    
-            case 4: cout << "Saliendo" << endl; break;     
+            case 3: renombraEstados();break;                    
+            case 4: imprimeEstados();break;                 
+            case 5: mandaArchivoAFD();break;   
+            case 6: cout << "Saliendo" << endl; break;     
             default: cout << "Opcion no valida" << endl; break;
         }        
-    } while (k!=4);    
+    } while (k!=6);    
     
 }
 void leerArchivoAFN(){ 
@@ -68,3 +74,8 @@ void generaAFD(){
      afn = new AFN(archAFN->getEstados(),archAFN->getEdoInicial(), archAFN->getEstadosFinales(),archAFN->getAlfabeto(),archAFN->getTransiciones());     
      cout << "Se ha generado el nuevo AFD" << endl;
 };
+void renombraEstados(){
+    afn->renombraEstados();
+    cout << "Se han renombrado los estados del AFD, vealo en las nuevas transiciones" << endl;
+}
+void mandaArchivoAFD(){};

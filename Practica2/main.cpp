@@ -15,7 +15,7 @@ void imprimeEstados();
 void imprimeTransiciones();
 void generaAFD();
 void renombraEstados();
-void mandaArchivoAFD();
+void mostrarEstadosFinales();
 archivoAFN* archAFN;
 AFN *afn;
 int main(int argc, char const *argv[])
@@ -33,7 +33,7 @@ void menu(){
         cout << "2 -> Muestra Transiciones AFD" << endl;  
         cout << "3 -> Renombra estados" << endl;
         cout << "4 -> Muestra nuevos estados AFD" << endl;  
-        cout << "5 -> Manda Archivo Transiciones AFD" << endl;
+        cout << "5 -> Muestra archivos finales de AFD" << endl;
         cout << "6 -> Salir" << endl;        
         cin>>k;
         switch (k)
@@ -43,7 +43,7 @@ void menu(){
             case 2: imprimeTransiciones();break;
             case 3: renombraEstados();break;                    
             case 4: imprimeEstados();break;                 
-            case 5: mandaArchivoAFD();break;   
+            case 5: mostrarEstadosFinales();break;   
             case 6: cout << "Saliendo" << endl; break;     
             default: cout << "Opcion no valida" << endl; break;
         }        
@@ -78,4 +78,7 @@ void renombraEstados(){
     afn->renombraEstados();
     cout << "Se han renombrado los estados del AFD, vealo en las nuevas transiciones" << endl;
 }
-void mandaArchivoAFD(){};
+void mostrarEstadosFinales(){
+    cout << "Mostrando los nuevos estados finales" << endl;
+    afn->muestraNuevosEstadosFinales();
+};

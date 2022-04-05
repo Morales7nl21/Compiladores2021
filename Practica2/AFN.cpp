@@ -166,6 +166,9 @@ void AFN::renombraEstados(){
             if(esEstadoNuevo==0 || esEstadoNuevo==2){
                 for(auto const &eR : estadosRenombrados){
                     if(eR.second==s){
+                        if(esFinal(eR.second)){
+                            estadosFinalesAFD.push_back(eR.first);
+                        }
                         s=eR.first;
                     }
                 }
@@ -179,5 +182,30 @@ void AFN::renombraEstados(){
         {
             if(eR.second == eN) eN = eR.first;
         }                
+    }
+
+    
+    std::sort(estadosFinalesAFD.begin(), estadosFinalesAFD.end()); // el algo unique funciona solo con val ordenados
+    auto last = unique(estadosFinalesAFD.begin(), estadosFinalesAFD.end());
+    estadosFinalesAFD.erase(last, estadosFinalesAFD.end());
+}
+bool AFN::esFinal(string c){
+    vector<string> edosEnString {};
+    stringstream input_stringstream(c);
+    string leectura;
+    while(getline(input_stringstream, leectura, ',')){
+        edosEnString.push_back(leectura);
+    }    
+    for(auto const &eF : estadosFinales){
+        for (auto const &eES : edosEnString)
+        {
+            if(eF == eES) return true;            
+        }        
+    }
+    return false;
+}
+void AFN::muestraNuevosEstadosFinales(){
+    for(auto const & mNEF:estadosFinalesAFD){
+        cout << mNEF << endl;
     }
 }

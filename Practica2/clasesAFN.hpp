@@ -13,6 +13,7 @@ private:
     vector<string> estadosNuevos;
     vector<vector<string>> nuevas_transiciones;
     vector<pair<string,string>> estadosRenombrados;
+    vector<string> estadosFinalesAFD;
     bool esTaVacio;
 
 public:
@@ -30,8 +31,9 @@ public:
     void creaAFD(string estadoActual, string calfabeto);
     string creaNuevoEstado(vector<string> &v);
     bool esNuevoEstado(string const &estadosN);
-    bool esFinal();
+    bool esFinal(string);
     void renombraEstados();
+    void muestraNuevosEstadosFinales();
 };
 class archivoAFN
 {

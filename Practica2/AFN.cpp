@@ -186,7 +186,7 @@ void AFN::renombraEstados(){
 
     
     std::sort(estadosFinalesAFD.begin(), estadosFinalesAFD.end()); // el algo unique funciona solo con val ordenados
-    auto last = unique(estadosFinalesAFD.begin(), estadosFinalesAFD.end());
+    last = unique(estadosFinalesAFD.begin(), estadosFinalesAFD.end());
     estadosFinalesAFD.erase(last, estadosFinalesAFD.end());
 }
 bool AFN::esFinal(string c){

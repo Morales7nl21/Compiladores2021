@@ -100,8 +100,7 @@ void AFN::creaEstadoVacio(string estado, string calf)
     }
 }
 void AFN::muestraTransiciones()
-{   
-    int cont = 0;
+{       
     for (auto const &it : nuevas_transiciones)
     {
         cout << "<Nueva transicion>" << endl;
@@ -144,4 +143,41 @@ bool AFN::esNuevoEstado(string const &estadosN)
             return false;
     }
     return true;
+}
+void AFN::renombraEstados(){
+    int cont=0;
+
+    std::sort(estadosNuevos.begin(), estadosNuevos.end()); // el algo unique funciona solo con val ordenados
+    auto last = unique(estadosNuevos.begin(), estadosNuevos.end());
+    estadosNuevos.erase(last, estadosNuevos.end());
+
+    for (auto const &eN : estadosNuevos)
+    {
+        estadosRenombrados.push_back(make_pair("q"+to_string(cont),eN));          
+        cont++;    
+    }
+
+    int esEstadoNuevo = 0;
+     for (auto  &it : nuevas_transiciones)
+    {        
+        esEstadoNuevo = 0;
+        for (auto  &s : it)
+        {
+            if(esEstadoNuevo==0 || esEstadoNuevo==2){
+                for(auto const &eR : estadosRenombrados){
+                    if(eR.second==s){
+                        s=eR.first;
+                    }
+                }
+            }
+            esEstadoNuevo++;            
+        }
+    }
+    for (auto  &eN : estadosNuevos)
+    {
+        for (auto const &eR : estadosRenombrados)
+        {
+            if(eR.second == eN) eN = eR.first;
+        }                
+    }
 }

@@ -12,6 +12,7 @@ private:
     vector<vector<string>> transicion;
     vector<string> estadosNuevos;
     vector<vector<string>> nuevas_transiciones;
+    vector<pair<string,string>> estadosRenombrados;
     bool esTaVacio;
 
 public:
@@ -30,6 +31,7 @@ public:
     string creaNuevoEstado(vector<string> &v);
     bool esNuevoEstado(string const &estadosN);
     bool esFinal();
+    void renombraEstados();
 };
 class archivoAFN
 {

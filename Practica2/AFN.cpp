@@ -8,22 +8,28 @@ void AFN::creaAFD(string estadoActual, string calf)
     string edLeer;
     stringstream input_stringstream(estadoActual); // convierte cad en stream
     vector<string> posibleNuevoEstado{};
+    string trans_leidas;
+    
+    
     while (getline(input_stringstream, edLeer, ','))
     {
+        
         for (auto const &t : transicion)
         {
             vector<string> linea_separada_transicion;
             for (auto const &vt : t)
             {
-                string trans_leidas;
+                trans_leidas;
                 stringstream input_stringstream2(vt);
 
                 while (getline(input_stringstream2, trans_leidas, ' '))
                 {
                     linea_separada_transicion.push_back(trans_leidas);
                     trans_leidas = "";
-                }
+                }                
             }
+            
+            //Estamos leyendo el q con su letra alf
             if (linea_separada_transicion[0] == edLeer && linea_separada_transicion[1] == calf)
             {
                 int cont = 0;
@@ -42,7 +48,9 @@ void AFN::creaAFD(string estadoActual, string calf)
     std::sort(posibleNuevoEstado.begin(), posibleNuevoEstado.end()); // el algo unique funciona solo con val ordenados
     auto last = unique(posibleNuevoEstado.begin(), posibleNuevoEstado.end());
     posibleNuevoEstado.erase(last, posibleNuevoEstado.end());
-    if (posibleNuevoEstado.size() > 0)
+
+    
+    if (posibleNuevoEstado.size() > 0 )
     {
         string nuevoEdoString = creaNuevoEstado(posibleNuevoEstado);
         vector<string> nuevaTransicionAcrear{};
@@ -96,7 +104,7 @@ void AFN::creaEstadoVacio(string estado, string calf)
             nuevas_transiciones.push_back(vectEdoVacio);
             vectEdoVacio.clear();
         }
-        esTaVacio = false;
+//        esTaVacio = false;
     }
 }
 void AFN::muestraTransiciones()
@@ -146,7 +154,7 @@ bool AFN::esNuevoEstado(string const &estadosN)
 }
 void AFN::renombraEstados(){
     int cont=0;
-
+    
     std::sort(estadosNuevos.begin(), estadosNuevos.end()); // el algo unique funciona solo con val ordenados
     auto last = unique(estadosNuevos.begin(), estadosNuevos.end());
     estadosNuevos.erase(last, estadosNuevos.end());
@@ -188,6 +196,7 @@ void AFN::renombraEstados(){
     std::sort(estadosFinalesAFD.begin(), estadosFinalesAFD.end()); // el algo unique funciona solo con val ordenados
     last = unique(estadosFinalesAFD.begin(), estadosFinalesAFD.end());
     estadosFinalesAFD.erase(last, estadosFinalesAFD.end());
+    
 }
 bool AFN::esFinal(string c){
     vector<string> edosEnString {};

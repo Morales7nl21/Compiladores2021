@@ -9,7 +9,9 @@ class AnalizadorLexico{
         AFD* afd;
         AFN* afn; 
         bool resultadoAnalisis;
+        string nombreArchivo;
     public:
+        AnalizadorLexico(string nombreArchivo):nombreArchivo(nombreArchivo){};
         void examinaArchivo();
         void analizaArchivo();
 };

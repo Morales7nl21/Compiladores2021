@@ -141,6 +141,7 @@ void leerArchivoAFD(){
     cout << "\nPara continuar introduzca cualquier caracter y presione enter" << endl;
     char k; cin >> k;
     limpiar_pantalla();
+    archivo.close();
 }
 void menu(){
     

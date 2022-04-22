@@ -12,10 +12,13 @@ void AnalizadorLexico::examinaArchivo(){
    
    
     while(getline(archivo,linea)){
-         linea.erase(remove(linea.begin(), linea.end(), ' '), linea.end());
-        linea.erase(remove(linea.begin(), linea.end(), '\t'), linea.end());
+         
+        string::iterator new_end = unique(linea.begin(), linea.end(), ambosEspacios);
+        linea.erase(new_end, linea.end());   
+        cout << linea << endl;
     }
 
     archivo.close();
 
 }
+bool ambosEspacios(char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); }

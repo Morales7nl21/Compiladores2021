@@ -11,6 +11,7 @@ class AnalizadorLexico{
         bool resultadoAnalisis;
         string nombreArchivo;
     public:
+        friend bool ambosEspacios(char, char);   
         AnalizadorLexico(string nombreArchivo):nombreArchivo(nombreArchivo){};
         void examinaArchivo();
         void analizaArchivo();

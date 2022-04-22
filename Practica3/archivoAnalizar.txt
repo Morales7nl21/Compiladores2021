@@ -1,0 +1,8 @@
+Init>>(AsChar cA, AsString sB){
+    a AsNumber value 10;
+    b AsNumber value 11;
+    a+10-7;
+    43-9+3 - ab + 8 - c;
+    cA:showChar;
+    sB:showString;
+}End

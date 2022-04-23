@@ -1,7 +1,7 @@
 #include <iostream>
 #include <bits/stdc++.h>
-#include "../Practica2/clasesAFN.hpp"
-#include "../Practica1/clases.hpp"
+#include "clasesAFN.hpp"
+#include "clases.hpp"
 using namespace std;
 
 class AnalizadorLexico
@@ -22,6 +22,7 @@ private:
     char F = '_';
 
 public:
+    bool creaAFNyAFD();
     AnalizadorLexico(string nombreArchivo) : nombreArchivo(nombreArchivo){};
     string examinaArchivo();
     bool analizaArchivo(string);

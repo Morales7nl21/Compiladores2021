@@ -25,7 +25,7 @@ vector<Estado> AFD::getEdosFinales(){
     return this->_edoFinal;
 }
 void AFD::setAlfabeto(vector<string> vA){
-    for (auto & const sA : vA)
+    for (auto  const  &sA : vA)
     {
         for(auto const & cA: sA){
             _alfabeto.push_back(cA);
@@ -39,7 +39,7 @@ void AFD::setEstadoInicial(string eI){
 }
 void AFD::setEstadosFinales(vector<string> eF){
     vector<Estado> final;
-    for (auto & const sF : eF)
+    for (auto  const &sF : eF)
     {
         Estado edosF(sF); 
         _edoFinal.push_back(edosF);

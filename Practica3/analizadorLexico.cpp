@@ -22,8 +22,8 @@ string AnalizadorLexico::examinaArchivo()
 bool AnalizadorLexico::analizaArchivo(string cad)
 {   
     FuncionTransicion *ft =  creaAFNyAFD();
-    string palTo = "ABBBA";
-    ft->hacerSigTransicion(palTo);
+    
+    
     //la vairable expAAFD sirve para ver si lo que se lleva leído es coherente a partir del AFN que se pasara a AFD y posterior se analizara dicha cadena
     string expAAFD=""; // Expresión resultante de simbolos que se generan a partir de determinar que tipo de conjunto es, se guarda como un string
     string aEvaluar = ""; // cadena leida a partir de cada espacio
@@ -41,7 +41,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         if (c == ' ' || c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_') //Es necesario para casos como: "var a AsNumber value 10;" donde el ';' va pegado o los otros signos
         {
             if (c == ' '){
-                    cout << c << "->Its a space" << endl;
+                    cout << c << "->Its a E" << endl;
                     expAAFD.push_back('E');
             }
                 
@@ -106,7 +106,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             aEvaluar.push_back(c);
     }
     cout << "EXP: " << expAAFD << endl;
-    
+    ft->hacerSigTransicion(expAAFD);
     
     return false;
 }

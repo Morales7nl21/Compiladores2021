@@ -52,7 +52,7 @@ void menu(){
 }
 void leerArchivoAFN(){ 
     
-    archAFN = new archivoAFN("AfnToAFD.txt");
+    archAFN = new archivoAFN("AnalizadorLexicoAFN.txt");
     //archAFN = new archivoAFN("AnalizadorLexicoAFN.txt");
     archAFN->muestraArchivoLeido();    
     

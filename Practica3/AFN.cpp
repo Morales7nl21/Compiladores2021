@@ -179,6 +179,7 @@ void AFN::renombraEstados(){
                         }
                         s=eR.first;
                     }
+                     s=eR.first;
                 }
             }
             esEstadoNuevo++;            

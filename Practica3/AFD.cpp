@@ -63,7 +63,7 @@ void AFD::setEstados(vector<string> edos, vector<vector<string>> transicionPorEs
             edoDeTransicion = t[0];
             alfabetoLetraTransicion = t[1];
             edoNuevoTransicion = t[2];
-            cout << "EdoT: " << edoDeTransicion << " alfbLetter: "<< alfabetoLetraTransicion << " newState: " << edoNuevoTransicion << endl;
+            //cout << "EdoT: " << edoDeTransicion << " alfbLetter: "<< alfabetoLetraTransicion << " newState: " << edoNuevoTransicion << endl;
             if(edoDeTransicion == es.getNombreEdo()){
                 Estado n(edoNuevoTransicion);
                 parestados.push_back(make_pair(n, alfabetoLetraTransicion[0]));

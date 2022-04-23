@@ -7,8 +7,9 @@ using namespace std;
 class AnalizadorLexico
 {
 private:
-    AFD *afd;
-    AFN *afn;
+    archivoAFN* archAFN  = new archivoAFN("AnalizadorLexicoAFN.txt");
+    
+    //AFD *afd;     
     bool resultadoAnalisis;
     string nombreArchivo;
     vector<string> palReservadas = {"repeat", "Init", "End", "Add",
@@ -22,8 +23,8 @@ private:
     char F = '_';
 
 public:
-    bool creaAFNyAFD();
+    FuncionTransicion * creaAFNyAFD();
     AnalizadorLexico(string nombreArchivo) : nombreArchivo(nombreArchivo){};
     string examinaArchivo();
-    bool analizaArchivo(string);
+    bool analizaArchivo(string);   
 };

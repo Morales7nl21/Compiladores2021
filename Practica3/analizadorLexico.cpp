@@ -20,7 +20,11 @@ string AnalizadorLexico::examinaArchivo()
     archivo.close();
 }
 bool AnalizadorLexico::analizaArchivo(string cad)
-{   //la vairable expAAFD sirve para ver si lo que se lleva leído es coherente a partir del AFN que se pasara a AFD y posterior se analizara dicha cadena
+{   
+    FuncionTransicion *ft =  creaAFNyAFD();
+    string palTo = "ABBBA";
+    ft->hacerSigTransicion(palTo);
+    //la vairable expAAFD sirve para ver si lo que se lleva leído es coherente a partir del AFN que se pasara a AFD y posterior se analizara dicha cadena
     string expAAFD=""; // Expresión resultante de simbolos que se generan a partir de determinar que tipo de conjunto es, se guarda como un string
     string aEvaluar = ""; // cadena leida a partir de cada espacio
     //Regex para ver si pertenece al tipo de dato visto en clase
@@ -102,22 +106,28 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             aEvaluar.push_back(c);
     }
     cout << "EXP: " << expAAFD << endl;
-    creaAFNyAFD();
+    
+    
     return false;
 }
-bool AnalizadorLexico::creaAFNyAFD(){
-     //Creo y abro archivo de txt para el afn del analizador léxico
-    archivoAFN* archAFN = new archivoAFN("AnalizadorLexicoAFN.txt");    
-    //Se crea el afn con el metodo constructor a partir de los datos tomados del archivo AFN
-    afn = new AFN(archAFN->getEstados(),archAFN->getEdoInicial(), archAFN->getEstadosFinales(),archAFN->getAlfabeto(),archAFN->getTransiciones());    
-   /*
-    afn->renombraEstados();
-    //Se crea el AFD
-    afd = new AFD();
+FuncionTransicion*  AnalizadorLexico::creaAFNyAFD(){
+     //Creo y abro archivo de txt para el afn del analizador léxico    
+    archAFN->muestraArchivoLeido();  
+    AFN* afn = new AFN(archAFN->getEstados(),archAFN->getEdoInicial(), archAFN->getEstadosFinales(),archAFN->getAlfabeto(),archAFN->getTransiciones());           
+    //Se crea el afn con el metodo constructor a partir de los datos tomados del archivo AFN        
+    afn->renombraEstados();    
+    afn->muestraTransiciones();
+    AFD *afd = new AFD();
+            
     // Se toman los valores del AFN convertido a AFD para pasarlo al objeto AFD
     afd->setAlfabeto(afn->getAlfabeto());
     afd->setEstadoInicial(afn->getEdoInicial());
     afd->setEstadosFinales(afn->getEstadosFinales());
+    //afn->muestraTransiciones();
     afd->setEstados(afn->getEstados(),afn->getTransiciones());
-    */
+    Transicion* t = new Transicion(*afd);    
+    t->llenaTransiciones();
+    string sedoini = afd->getEdoInicial().getNombreEdo();
+    FuncionTransicion *ft = new FuncionTransicion(*afd,sedoini,*t);    
+    return ft;
 }

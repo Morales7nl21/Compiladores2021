@@ -51,14 +51,25 @@ void AFD::setEstados(vector<string> edos, vector<vector<string>> transicionPorEs
         Estado edos(e); 
         _estados.push_back(edos);        
     }
-    int cont = 0;
-    for(auto const &t: transicionPorEstado){
-        if(cont != 0){
-            cout << t[1] << endl;
-        }else if(cont == 3){
-            
-            cont =0;
+        
+    string edoDeTransicion = "";
+    string alfabetoLetraTransicion = "";
+    string edoNuevoTransicion = "";
+    
+    for(auto  &es: _estados){
+        vector<pair<Estado,char>> parestados; 
+        
+        for(auto const &t: transicionPorEstado){
+            edoDeTransicion = t[0];
+            alfabetoLetraTransicion = t[1];
+            edoNuevoTransicion = t[2];
+            cout << "EdoT: " << edoDeTransicion << " alfbLetter: "<< alfabetoLetraTransicion << " newState: " << edoNuevoTransicion << endl;
+            if(edoDeTransicion == es.getNombreEdo()){
+                Estado n(edoNuevoTransicion);
+                parestados.push_back(make_pair(n, alfabetoLetraTransicion[0]));
+            }            
         }
-        cont++;
-    }
+        es.setSigEdos(parestados);
+        parestados.clear();       
+    }   
 }

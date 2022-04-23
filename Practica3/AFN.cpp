@@ -178,8 +178,7 @@ void AFN::renombraEstados(){
                             estadosFinalesAFD.push_back(eR.first);
                         }
                         s=eR.first;
-                    }
-                     s=eR.first;
+                    }                    
                 }
             }
             esEstadoNuevo++;            

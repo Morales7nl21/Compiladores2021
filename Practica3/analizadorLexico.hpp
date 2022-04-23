@@ -8,8 +8,7 @@ class AnalizadorLexico
 {
 private:
     archivoAFN* archAFN  = new archivoAFN("AnalizadorLexicoAFN.txt");
-    
-    //AFD *afd;     
+         
     bool resultadoAnalisis;
     string nombreArchivo;
     vector<string> palReservadas = {"repeat", "Init", "End", "Add",
@@ -17,10 +16,7 @@ private:
                                     "AsNumber", "AsFloat", "AsChar", "Array", "len", "AsString",
                                     "()", "End", "showNumber", "showFloat", "showChar", "showString", 
                                     "value", "Zero", "void", "number", "char", "string"};
-
-    vector<string> D = {"/", "*", "+", "-", "{", "}", "(", ")", "<", ">", ".", ":", ">>", "<-", "->"};
-    vector<char> E = {' '};
-    char F = '_';
+    
 
 public:
     FuncionTransicion * creaAFNyAFD();

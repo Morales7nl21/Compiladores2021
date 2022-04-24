@@ -5,7 +5,7 @@ using namespace std;
 
 string AnalizadorLexico::examinaArchivo()
 {
-    cout << "Abriendo archivo: " << nombreArchivo << endl;
+    //cout << "Abriendo archivo: " << nombreArchivo << endl;
     ifstream archivo(nombreArchivo); // se lee el archivo
     string linea;
     string archivoSinEspacios1Linea;
@@ -133,7 +133,7 @@ FuncionTransicion*  AnalizadorLexico::creaAFNyAFD(){
     // Se toman los valores del AFN convertido a AFD para pasarlo al objeto AFD
     afd->setAlfabeto(afn->getAlfabeto());
     afd->setEstadoInicial(afn->getEdoInicial());
-    vector<string> estadosFinales {"q2", "q3", "q4", "q5"};
+    vector<string> estadosFinales {"q2", "q3", "q1", "q5"};
     afd->setEstadosFinales(estadosFinales);
     //afn->muestraTransiciones();
     afd->setEstados(afn->getEstados(),afn->getTransiciones());

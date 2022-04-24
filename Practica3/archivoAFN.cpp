@@ -5,7 +5,7 @@
 
 void archivoAFN::leeArchivo()
 {
-    cout << "Abriendo archivo" << nombre_archivo << endl;
+    //cout << "Abriendo archivo" << nombre_archivo << endl;
 
     ifstream archivo(nombre_archivo); // se lee el archivo
     string linea;

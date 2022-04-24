@@ -122,7 +122,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 }
 FuncionTransicion*  AnalizadorLexico::creaAFNyAFD(){
      //Creo y abro archivo de txt para el afn del analizador léxico    
-    archAFN->muestraArchivoLeido();  
+    //archAFN->muestraArchivoLeido();  
     AFN* afn = new AFN(archAFN->getEstados(),archAFN->getEdoInicial(), archAFN->getEstadosFinales(),archAFN->getAlfabeto(),archAFN->getTransiciones());           
     //Se crea el afn con el metodo constructor a partir de los datos tomados del archivo AFN        
     afn->renombraEstados();    

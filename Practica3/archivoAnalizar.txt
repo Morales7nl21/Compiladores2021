@@ -5,4 +5,4 @@ Init Zero >> ( AsChar c, AsString s ) () void{
     43 - 9 + 3 - ab * 8 - c;
     c:showChar;
     s:showString
-} End
+} End;

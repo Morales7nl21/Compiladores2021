@@ -42,11 +42,11 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         if (c == ' ' || c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_') //Es necesario para casos como: "var a AsNumber value 10;" donde el ';' va pegado o los otros signos
         {
             if (c == ' '){
-                    cout << c << "->Its a E" << endl;
+                    //cout << c << "->Its a E" << endl;
                     expAAFD.push_back('E');
                     string d = "";
                     d.push_back(c);
-                    simbolos[d] = "space";
+                    simbolos[d] = "Space";
             }
                 
             if (aEvaluar.size() > 0)
@@ -55,50 +55,43 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                     {
                         if (aEvaluar == pr)
                         {
-                            cout << aEvaluar << "->"
-                                 << "is a Pal Reservada" << endl;                            
-                            simbolos[aEvaluar] = "palabra reservado";
+                            //cout << aEvaluar << "->is a Pal Reservada" << endl;                            
+                            simbolos[aEvaluar] = "Palabra reservado";
                             palR = true;
                             break;
                         }
                     }
                     if (regex_match(aEvaluar, regexA)){
-                        cout << aEvaluar << "->"
-                         << "is a A" << endl;
+                        //cout << aEvaluar << "->is a A" << endl;
                           expAAFD.push_back('A');
-                          simbolos[aEvaluar] = "Palabra en mayusculas";
+                          simbolos[aEvaluar] = "Variable mayusculas";
                     }
                     
                 else if (regex_match(aEvaluar, regexB)){
-                    cout << aEvaluar << "->"
-                         << "is a B" << endl;
+                    //cout << aEvaluar << "->is a B" << endl;
                     expAAFD.push_back('B');
-                    simbolos[aEvaluar] = "Palabra en minuscula";
+                    simbolos[aEvaluar] = "Variable minuscula";
                 }
                 else if (regex_match(aEvaluar, regexC)){
-                    cout << aEvaluar << "->"
-                         << "is a C" << endl;
+                    //cout << aEvaluar << "->is a C" << endl;
                     expAAFD.push_back('C');
                     simbolos[aEvaluar] = "Numero";
                 }
                     
                 else if (regex_match(aEvaluar, regexD)){
-                    cout << aEvaluar << "->"
-                         << "is a D" << endl;
+                    //cout << aEvaluar << "->is a D" << endl;
                     expAAFD.push_back('D');
                     simbolos[aEvaluar] = "Simbolo";
                 }
                     
                 else if (regex_match(aEvaluar, regexF)){
-                    cout << aEvaluar << "->"
-                         << "is a F" << endl;
+                    //cout << aEvaluar << "->is a F" << endl;
                     expAAFD.push_back('F');
                     simbolos[aEvaluar] = "Es guion bajo";
                 }
                     
                 else if (c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_'){
-                    cout << c << "->"
-                         << "is a D" << endl;  
+                    //cout << c << "->is a D" << endl;  
                     string dv = "";  
                     dv.push_back(c);
                     expAAFD.push_back('D');
@@ -133,8 +126,8 @@ FuncionTransicion*  AnalizadorLexico::creaAFNyAFD(){
     AFN* afn = new AFN(archAFN->getEstados(),archAFN->getEdoInicial(), archAFN->getEstadosFinales(),archAFN->getAlfabeto(),archAFN->getTransiciones());           
     //Se crea el afn con el metodo constructor a partir de los datos tomados del archivo AFN        
     afn->renombraEstados();    
-    afn->muestraTransiciones();
-    afn->muestraNuevosEstadosFinales();
+    //afn->muestraTransiciones();
+    //afn->muestraNuevosEstadosFinales();
     AFD *afd = new AFD();
             
     // Se toman los valores del AFN convertido a AFD para pasarlo al objeto AFD

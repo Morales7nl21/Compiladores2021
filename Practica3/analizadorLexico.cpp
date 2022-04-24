@@ -22,7 +22,7 @@ string AnalizadorLexico::examinaArchivo()
 bool AnalizadorLexico::analizaArchivo(string cad)
 {   
     FuncionTransicion *ft =  creaAFNyAFD();
-    
+    map<string, string> simbolos {}; 
     
     //la vairable expAAFD sirve para ver si lo que se lleva leído es coherente a partir del AFN que se pasara a AFD y posterior se analizara dicha cadena
     string expAAFD=""; // Expresión resultante de simbolos que se generan a partir de determinar que tipo de conjunto es, se guarda como un string
@@ -36,6 +36,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
    
 
     bool palR = false;
+    int id =0;
     for (auto const &c : cad)
     {
         if (c == ' ' || c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_') //Es necesario para casos como: "var a AsNumber value 10;" donde el ';' va pegado o los otros signos
@@ -43,19 +44,20 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             if (c == ' '){
                     cout << c << "->Its a E" << endl;
                     expAAFD.push_back('E');
+                    string d = "";
+                    d.push_back(c);
+                    simbolos[d] = "space";
             }
                 
             if (aEvaluar.size() > 0)
-            {
-
-                
-               
+            {                               
                     for (auto const &pr : palReservadas)
                     {
                         if (aEvaluar == pr)
                         {
                             cout << aEvaluar << "->"
                                  << "is a Pal Reservada" << endl;                            
+                            simbolos[aEvaluar] = "palabra reservado";
                             palR = true;
                             break;
                         }
@@ -64,35 +66,43 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                         cout << aEvaluar << "->"
                          << "is a A" << endl;
                           expAAFD.push_back('A');
+                          simbolos[aEvaluar] = "Palabra en mayusculas";
                     }
                     
                 else if (regex_match(aEvaluar, regexB)){
                     cout << aEvaluar << "->"
                          << "is a B" << endl;
                     expAAFD.push_back('B');
+                    simbolos[aEvaluar] = "Palabra en minuscula";
                 }
                 else if (regex_match(aEvaluar, regexC)){
                     cout << aEvaluar << "->"
                          << "is a C" << endl;
                     expAAFD.push_back('C');
+                    simbolos[aEvaluar] = "Numero";
                 }
                     
                 else if (regex_match(aEvaluar, regexD)){
                     cout << aEvaluar << "->"
                          << "is a D" << endl;
                     expAAFD.push_back('D');
+                    simbolos[aEvaluar] = "Simbolo";
                 }
                     
                 else if (regex_match(aEvaluar, regexF)){
                     cout << aEvaluar << "->"
                          << "is a F" << endl;
                     expAAFD.push_back('F');
+                    simbolos[aEvaluar] = "Es guion bajo";
                 }
                     
                 else if (c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_'){
                     cout << c << "->"
-                         << "is a D" << endl;    
+                         << "is a D" << endl;  
+                    string dv = "";  
+                    dv.push_back(c);
                     expAAFD.push_back('D');
+                    simbolos[dv] = "Simbolo";
                 }
                     
                 else if (!palR){
@@ -104,8 +114,15 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         }
         else
             aEvaluar.push_back(c);
+        
     }
     cout << "EXP: " << expAAFD << endl;
+    for (auto const &i : simbolos)
+    {
+        cout << i.first << " - " << i.second << " id :  " <<id << endl;
+        id++;
+    }
+    
     ft->hacerSigTransicion(expAAFD);
     
     return false;
@@ -117,12 +134,14 @@ FuncionTransicion*  AnalizadorLexico::creaAFNyAFD(){
     //Se crea el afn con el metodo constructor a partir de los datos tomados del archivo AFN        
     afn->renombraEstados();    
     afn->muestraTransiciones();
+    afn->muestraNuevosEstadosFinales();
     AFD *afd = new AFD();
             
     // Se toman los valores del AFN convertido a AFD para pasarlo al objeto AFD
     afd->setAlfabeto(afn->getAlfabeto());
     afd->setEstadoInicial(afn->getEdoInicial());
-    afd->setEstadosFinales(afn->getEstadosFinales());
+    vector<string> estadosFinales {"q2", "q3", "q4", "q5"};
+    afd->setEstadosFinales(estadosFinales);
     //afn->muestraTransiciones();
     afd->setEstados(afn->getEstados(),afn->getTransiciones());
     Transicion* t = new Transicion(*afd);    

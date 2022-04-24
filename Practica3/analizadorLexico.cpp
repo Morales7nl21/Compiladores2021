@@ -46,7 +46,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                     expAAFD.push_back('E');
                     string d = "";
                     d.push_back(c);
-                    simbolos[d] = "Space";
+                    simbolos[d] = "Simbolo de espacio";
             }
                 
             if (aEvaluar.size() > 0)
@@ -56,7 +56,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                         if (aEvaluar == pr)
                         {
                             //cout << aEvaluar << "->is a Pal Reservada" << endl;                            
-                            simbolos[aEvaluar] = "Palabra reservado";
+                            simbolos[aEvaluar] = "Palabra reservada";
                             palR = true;
                             break;
                         }
@@ -75,27 +75,35 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 else if (regex_match(aEvaluar, regexC)){
                     //cout << aEvaluar << "->is a C" << endl;
                     expAAFD.push_back('C');
-                    simbolos[aEvaluar] = "Numero";
+                    simbolos[aEvaluar] = "Numero entero constante";
                 }
                     
                 else if (regex_match(aEvaluar, regexD)){
                     //cout << aEvaluar << "->is a D" << endl;
                     expAAFD.push_back('D');
-                    simbolos[aEvaluar] = "Simbolo";
+                    if(aEvaluar=="*") simbolos[aEvaluar] = "Simbolo multiplicacion";
+                    else if(aEvaluar=="-") simbolos[aEvaluar] = "Simbolo de resta";
+                    else if(aEvaluar=="+") simbolos[aEvaluar] = "Simbolo de suma";
+                    else if (aEvaluar==">>") simbolos[aEvaluar] = "Simbolo de funcion";
+                    simbolos[aEvaluar] = "Simbolo no operacion";
                 }
                     
                 else if (regex_match(aEvaluar, regexF)){
                     //cout << aEvaluar << "->is a F" << endl;
                     expAAFD.push_back('F');
-                    simbolos[aEvaluar] = "Es guion bajo";
+                    simbolos[aEvaluar] = "Simbolo de guien bajo";
                 }
                     
                 else if (c == ';' || c == ':' || c == '(' || c == ')' || c == '{' || c == '}' || c == '_'){
                     //cout << c << "->is a D" << endl;  
                     string dv = "";  
                     dv.push_back(c);
+                    
                     expAAFD.push_back('D');
-                    simbolos[dv] = "Simbolo";
+                    if(c==';')  simbolos[dv] = "Simbolo de terminacion";
+                    if(c==':')  simbolos[dv] = "Simbolo de metodo";
+                    else
+                    simbolos[dv] = "Simbolo no operacion";
                 }
                     
                 else if (!palR){
@@ -106,13 +114,13 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             aEvaluar.clear();
         }
         else
-            aEvaluar.push_back(c);
-        
+            aEvaluar.push_back(c);            
     }
     cout << "EXP: " << expAAFD << endl;
+    cout << "ID\t|COMPONENTE LEXICO\t| LEXEMA  " << endl;
     for (auto const &i : simbolos)
     {
-        cout << i.first << " - " << i.second << " id :  " <<id << endl;
+        cout <<"id :" << id << "\t|" <<i.second << " \t| " << i.first << endl;
         id++;
     }
     

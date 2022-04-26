@@ -32,7 +32,7 @@ void FuncionTransicion::hacerSigTransicion(string &pal){
         cont++;
     }
     if(pal.length()==1){
-        esPosible(pal) ? cout << "\nSi esta en el lenguaje" << endl : cout << "\nNo esta en el lenguaje" << endl;
+        esPosible(pal) ? cout << "\nSi" << endl : cout << "\nNo" << endl;
         _edoActual = auxE;        
     }
     else{            

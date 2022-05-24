@@ -23,6 +23,8 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 {
     FuncionTransicion *ft = creaAFNyAFD();
     map<string, string> simbolos{};
+    map<pair<string,int>, string> simbolos2{};
+    simbolos2[make_pair("Q0",1)] = 3;
     vector<string> expresionesAlmacenadas {};
     // la vairable expAAFD sirve para ver si lo que se lleva leído es coherente a partir del AFN que se pasara a AFD y posterior se analizara dicha cadena
     string expAAFD = "";  // Expresión resultante de simbolos que se generan a partir de determinar que tipo de conjunto es, se guarda como un string

@@ -28,6 +28,7 @@ private:
     vector<string> noTerminales;
     vector<vector<string>> v_gramatica{};
     vector<pair<string, vector<string>>> primerosNoConjunto;
+    vector<pair<string,vector<pair<string,string>>>> sigNoConjunto;
 
 public:
     LL1()
@@ -45,7 +46,7 @@ public:
         el tercer parametro hace referencia al conjunto que guardará sus primeros
     */
     void primeros( const vector<string> &, vector<string> &);
-    vector<string> siguientes(string);
+    void siguientes(const string &, vector<string> &);
     void ConstruirTabla();
     void ProbarCadena(string);
     void GetTerminales();

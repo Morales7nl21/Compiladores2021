@@ -211,7 +211,7 @@ void LL1::obtieneSiguientes()
 {
     vector<vector<string>> cv_gramatica = v_gramatica;
     vector<pair<string, vector<vector<string>>>> conjuntoParBusqueda{};
-    vector<pair<string, pair<vector<string>,vector<string>>>> paresPorSimbolo{}; // Ocupara los pares de simbolo y string donde se encuentra de todas las cadenas
+    vector<pair<string, pair<vector<string>, vector<string>>>> paresPorSimbolo{}; // Ocupara los pares de simbolo y string donde se encuentra de todas las cadenas
     // Limpiar data y asignacion de vector de vectores de string pa cada terminal
     int cont = 0;
     for (auto const &nt : noTerminales)
@@ -259,67 +259,148 @@ void LL1::obtieneSiguientes()
                     s = s.substr(1, s.size());
                 if (s[s.size() - 1] == ' ')
                     s = s.substr(0, s.size() - 1);
-               
+
                 vector<string> busquedaDondeNoEsta = split(s, ' '); // Volvemos a dividir los grupos ya limpios de spaces en un vector de string para ver si esta ahí el elemento
                 if (any_of(busquedaDondeNoEsta.begin(), busquedaDondeNoEsta.end(), [&](const string &elem)
                            { return elem == conjuntoParesBS.first; }))
                 { // se checa si esta en todos los grupos encontrados
                     sentencias_validas.push_back(s);
-                    
+
                     valorOrigen.push_back(i[0]);
-                    cout<<"METIENDO AL PAIR: " << s << "="<< i[0] << endl;
+                    cout << "METIENDO AL PAIR: " << s << "=" << i[0] << endl;
                 }
             }
         }
-        paresPorSimbolo.push_back(make_pair(conjuntoParesBS.first,make_pair(valorOrigen,sentencias_validas) ));
+        paresPorSimbolo.push_back(make_pair(conjuntoParesBS.first, make_pair(valorOrigen, sentencias_validas)));
     }
 
     for (auto &&pps : paresPorSimbolo)
     {
         cout << pps.first << " se ha encontrado en: " << endl;
         vector<string> vectoresSiguiente{};
-        vector<pair<string,string>> vectorSiguienteClean{};
-        int contParOrigen  = 0;  
+        vector<pair<string, string>> vectorSiguienteClean{};
+        int contParOrigen = 0;
         for (auto &&ppsv : pps.second.second)
-        {                        
+        {
             vector<string> vectoresPorStringDondeSeEncontro = split(ppsv, ' ');
             auto ret = std::find_if(vectoresPorStringDondeSeEncontro.begin(), vectoresPorStringDondeSeEncontro.end(),
                                     [&](string s)
                                     { return s == pps.first; });
 
             int contVectoresBuenos = 0;
-              
+
             for (auto const &vsS : vectoresPorStringDondeSeEncontro)
             {
 
                 if (contVectoresBuenos > ret - vectoresPorStringDondeSeEncontro.begin() && ret != vectoresPorStringDondeSeEncontro.end())
                 {
                     vectoresSiguiente.push_back(vsS);
-                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen],vsS));                    
-                }else if(ret+1 == vectoresPorStringDondeSeEncontro.end()){
-                    string nada= "";
-                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen],nada)); 
+                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen], vsS));
                 }
-                
-                
-                contVectoresBuenos++;               
-                
-            } 
-            contParOrigen++;            
+                else if (ret + 1 == vectoresPorStringDondeSeEncontro.end())
+                {
+                    string nada = "";
+                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen], nada));
+                }
+
+                contVectoresBuenos++;
+            }
+            contParOrigen++;
         }
-       
-                
+
         std::sort(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         auto last = std::unique(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         vectorSiguienteClean.erase(last, vectorSiguienteClean.end());
 
-        
         for (auto const &vSB : vectorSiguienteClean)
-        {            
-            cout << vSB.second<< "padre:"<<vSB.first << endl;
+        {
+            cout << vSB.second << "padre:" << vSB.first << endl;
         }
-        
-
         cout << endl;
+        sigNoConjunto.push_back(make_pair(pps.first, vectorSiguienteClean));
     }
+    /*
+    E se ha encontrado en:
+    )padre:F
+
+    T’ se ha encontrado en:
+    padre:T
+    padre:T’
+
+    F se ha encontrado en:
+    T’padre:T
+    T’padre:T’
+
+    T se ha encontrado en:
+    E’padre:E
+    E’padre:E’
+    εpadre:E’
+    */
+    for (auto const &sNC : sigNoConjunto)
+    {
+        vector<string> r{};
+        siguientes(sNC.first, r);
+        std::sort(r.begin(), r.end());
+        auto last = std::unique(r.begin(), r.end());
+        r.erase(last, r.end());
+        cout << sNC.first << " segundos: ";
+        for (auto const &i : r)
+        {
+            cout << i << ".";
+        }
+        cout << endl;
+        
+    }
+}
+void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
+{
+    if (cont_s == 0)
+    {
+        vectorRet.push_back("$");
+        cont_s++;
+    }
+    
+        for (auto const &vBS : sigNoConjunto)
+        {
+            if (vBS.first == busqueda)
+            {
+                for (auto const &iterPares : vBS.second)
+                {
+                    if (!iterPares.first.empty())
+                    { //
+                        
+                        for (auto const &cpb : conjunto_primeros[iterPares.first])
+                        {
+                            if (cpb != "ε")
+                            {
+                                vectorRet.push_back(cpb);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        bool contieneEpsilon = false;
+                        for (auto const &cpb : (conjunto_primeros[busqueda]))
+                        {
+                            if (cpb == "ε")
+                            {
+                                contieneEpsilon = true;
+                                break;
+                            }
+                        }
+                        if (contieneEpsilon)
+                        {
+                            siguientes(iterPares.second, vectorRet);
+                        }else{
+                            if(iterPares.first.empty()){
+                                if(busqueda!=iterPares.second){
+                                    siguientes(iterPares.second, vectorRet);
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
 }

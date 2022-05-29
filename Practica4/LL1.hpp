@@ -30,6 +30,7 @@ private:
     vector<vector<string>> v_gramatica{};
     vector<pair<string, vector<string>>> primerosNoConjunto;
     map<string, vector<pair<string,string>>> sigNoConjunto;
+    
 
 public:
     LL1()
@@ -37,6 +38,7 @@ public:
         asignaTermNoTermYProduc();
         obtienePrimeros();
         obtieneSiguientes();
+        generacionTabla();
     }
     void obtienePrimeros();
     void obtieneSiguientes();
@@ -48,7 +50,7 @@ public:
     */
     void primeros( const vector<string> &, vector<string> &);
     void siguientes(const string &, vector<string> &);
-    void ConstruirTabla();
+    void generacionTabla();
     void ProbarCadena(string);
     void GetTerminales();
     void GetnoTerminales();

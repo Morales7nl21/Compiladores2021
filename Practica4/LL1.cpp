@@ -317,32 +317,10 @@ void LL1::obtieneSiguientes()
         std::sort(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         auto last = std::unique(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         vectorSiguienteClean.erase(last, vectorSiguienteClean.end());
-
-        for (auto const &vSB : vectorSiguienteClean)
-        {
-            //cout << vSB.second << "padre:" << vSB.first << endl;
-        }
-        cout << endl;
+                
         sigNoConjunto[pps.first] = vectorSiguienteClean;
     }
-    /*
-    E se ha encontrado en:
-    )padre:F
-
-    T’ se ha encontrado en:
-    padre:T
-    padre:T’
-
-    F se ha encontrado en:
-    T’padre:T
-    T’padre:T’
-
-    T se ha encontrado en:
-    E’padre:E
-    E’padre:E’
-    εpadre:E’
-    */
-
+   
     for (auto const &nt : noTerminales)
     {
         //cout << "NT: " << nt << endl;
@@ -416,4 +394,27 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
         }
         band_sigE = false;
     }
+}
+void LL1::generacionTabla(){
+    vector<string> cabezera{};
+    for (auto const &t : terminales)
+    {
+        cabezera.push_back(t);    
+    }
+    cabezera.push_back("$");        
+    tabla.push_back(cabezera);
+    for(auto const &fg: v_gramatica){
+        for (auto const &cg : fg)
+        {
+            cout << cg << " ";
+        }
+        cout << endl;
+    }
+    /*
+    for(auto const &nt: noTerminales){
+        
+    }
+    */
+    
+
 }

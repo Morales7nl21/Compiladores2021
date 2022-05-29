@@ -43,14 +43,36 @@ void LL1::primeros(const vector<string> &elementoAbuscarPrimero, vector<string> 
         }
         else if (verificaSiEsNoTerminal(eAP))
         {
-            for (auto const &pNC : primerosNoConjunto)
-            {                
-                if(eAP == pNC.first ){
-                    primeros(pNC.second, conjuntoRetorno);
+            if (conjunto_primeros.find(eAP) != conjunto_primeros.end())
+            {
+                
+                for (auto const &cpf : conjunto_primeros[eAP])
+                {
+                    bool band_existeE = false;
+                    for (auto const &cR : conjuntoRetorno)
+                    {
+                        if (cR == cpf)
+                        {
+                            band_existeE = true;
+                        }
+                    }
+                    if (!band_existeE)
+                    {
+                        conjuntoRetorno.push_back(cpf);
+                    }
                 }
-            }            
+            }
+            else
+            {
+                for (auto const &pNC : primerosNoConjunto)
+                {
+                    if (eAP == pNC.first)
+                    {
+                        primeros(pNC.second, conjuntoRetorno);
+                    }
+                }
+            }
         }
-        
     }
 }
 bool LL1::verificaSiEsNoTerminal(string simbolo)
@@ -129,11 +151,11 @@ void LL1::asignaTermNoTermYProduc()
     }
 }
 
-void LL1::obtienePrimeros()
+void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y no terminales
 {
     int cont = 0;
     vector<string> r{};
-    
+
     for (auto const &t : noTerminales)
     {
 
@@ -164,46 +186,27 @@ void LL1::obtienePrimeros()
         cont++;
     }
 
-    cout << "NO Terminales" << endl;
-    for (auto const &t : noTerminales)
+    for (auto const &pnc : primerosNoConjunto) // Se inicia la busqueda de primeros
     {
-        cout << t << endl;
+        vector<string> cr{};
+        primeros(pnc.second, cr);
+        conjunto_primeros[pnc.first] = cr;
     }
-    cout << "Terminales" << endl;
-    for (auto const &t : terminales)
-    {
-        cout << t << endl;
-    }
-    cout << "Pares primero" << endl;
 
-    for (auto const &pnc : primerosNoConjunto)
+    cout << "Primeros" << endl;
+    for (auto const &cp : conjunto_primeros)
     {
-        cout << pnc.first << ": ";
-        for (auto const &conjP : pnc.second)
+        cout << cp.first << ": ";
+        for (auto const &i : cp.second)
         {
-            cout << conjP << ",";
+            cout << i << " ";
         }
         cout << endl;
     }
-    
-    
-    for (auto const &pnc : primerosNoConjunto)
-    {
-        vector<string> cr{};
-        cout << "ENCONTRANDO PRIMEROS" << endl;
-        
-        cout << pnc.first << ": ";
-        primeros(pnc.second, cr);
-        
-        for (auto const &i : cr)
-        {
-             cout << i << endl;
-        }
-        
-    }
-    
+
     cout << endl
          << endl;
-
-
+}
+void LL1::obtieneSegundos()
+{
 }

@@ -401,18 +401,21 @@ void LL1::generacionTabla(){
     {
         cabezera.push_back(t);    
     }
+    map<pair<string,string>,string> mp;
+    
     cabezera.push_back("$");        
     tabla.push_back(cabezera);
-    
-    
-    for(auto const &nt: noTerminales){
-        for (auto const &cz : cabezera)
-        {
-            
-            
+
+    for(auto const &t: terminales){
+        for(auto const &cp: conjunto_primeros[t]){
+            if(cp == "ε"){
+                //conjunto_siguientes[]
+            }
         }
-            
+        cout << endl;
     }
+    
+    
     
     
 

@@ -23,7 +23,7 @@ private:
     */ 
     vector<vector<string>> tabla;
     map<string, vector<string>> conjunto_primeros; //Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
-    vector<vector<string>> conjunto_siguientes;
+    map<string, vector<string>> conjunto_siguientes;
     vector<string> terminales;
     vector<string> noTerminales;
     vector<vector<string>> v_gramatica{};

@@ -192,6 +192,12 @@ void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y 
         primeros(pnc.second, cr);
         conjunto_primeros[pnc.first] = cr;
     }
+    for (auto const &ctp : terminales)
+    {
+        vector<string> cr{};
+        cr.push_back(ctp);
+        conjunto_primeros[ctp] = cr;
+    }
 
     cout << "Primeros" << endl;
     for (auto const &cp : conjunto_primeros)
@@ -336,20 +342,22 @@ void LL1::obtieneSiguientes()
     E’padre:E’
     εpadre:E’
     */
+
     for (auto const &sNC : sigNoConjunto)
     {
+
         vector<string> r{};
         siguientes(sNC.first, r);
         std::sort(r.begin(), r.end());
         auto last = std::unique(r.begin(), r.end());
         r.erase(last, r.end());
+        conjunto_siguientes[sNC.first] = r;
         cout << sNC.first << " segundos: ";
         for (auto const &i : r)
         {
             cout << i << ".";
         }
         cout << endl;
-        
     }
 }
 void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
@@ -359,48 +367,64 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
         vectorRet.push_back("$");
         cont_s++;
     }
-    
-        for (auto const &vBS : sigNoConjunto)
+
+    for (auto const &vBS : sigNoConjunto)
+    {
+
+        if (vBS.first == busqueda)
         {
-            if (vBS.first == busqueda)
+            if (!conjunto_siguientes[vBS.first].empty())
             {
+                for (auto const &cs : conjunto_siguientes[vBS.first])
+                {
+                    vectorRet.push_back(cs);
+                }
+            }
+            else
+            {
+
                 for (auto const &iterPares : vBS.second)
                 {
-                    if (!iterPares.first.empty())
+                    cout << "BUSQUEDA: " << busqueda << " PAR  [" << iterPares.first << "][" << iterPares.second << "]" << endl;
+                    if (!iterPares.second.empty())
                     { //
-                        
-                        for (auto const &cpb : conjunto_primeros[iterPares.first])
+                        cout << "CICLO 1" << endl;
+                        if (!verificaSiEsNoTerminal(iterPares.second))
                         {
-                            if (cpb != "ε")
+                            for (auto const &cpb : conjunto_primeros[iterPares.second])
                             {
-                                vectorRet.push_back(cpb);
+                                // cout << "CP: " << cpb << endl;
+                                if (cpb != "ε")
+                                {
+                                    vectorRet.push_back(cpb);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            cout << "CICLO 2" << endl;
+                            bool contieneEpsilon = false;
+                            for (auto const &cpb : (conjunto_primeros[iterPares.second]))
+                            {
+                                if (cpb == "ε")
+                                {
+                                    contieneEpsilon = true;
+                                    break;
+                                }
+                            }
+                            if (contieneEpsilon)
+                            {
+                                siguientes(iterPares.first, vectorRet);
                             }
                         }
                     }
-                    else
+                    else if (busqueda != iterPares.first)
                     {
-                        bool contieneEpsilon = false;
-                        for (auto const &cpb : (conjunto_primeros[busqueda]))
-                        {
-                            if (cpb == "ε")
-                            {
-                                contieneEpsilon = true;
-                                break;
-                            }
-                        }
-                        if (contieneEpsilon)
-                        {
-                            siguientes(iterPares.second, vectorRet);
-                        }else{
-                            if(iterPares.first.empty()){
-                                if(busqueda!=iterPares.second){
-                                    siguientes(iterPares.second, vectorRet);
-                                }
-                                
-                            }
-                        }
+                        cout << "CICLO 3" << endl;
+                        siguientes(iterPares.first, vectorRet);
                     }
                 }
             }
         }
+    }
 }

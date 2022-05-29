@@ -210,8 +210,6 @@ void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y 
         cout << endl;
     }
 
-    cout << endl
-         << endl;
 }
 void LL1::obtieneSiguientes()
 {
@@ -273,7 +271,7 @@ void LL1::obtieneSiguientes()
                     sentencias_validas.push_back(s);
 
                     valorOrigen.push_back(i[0]);
-                   // cout << "METIENDO AL PAIR: " << s << "=" << i[0] << endl;
+                    // cout << "METIENDO AL PAIR: " << s << "=" << i[0] << endl;
                 }
             }
         }
@@ -282,7 +280,7 @@ void LL1::obtieneSiguientes()
 
     for (auto &&pps : paresPorSimbolo)
     {
-        //cout << pps.first << " se ha encontrado en: " << endl;
+        // cout << pps.first << " se ha encontrado en: " << endl;
         vector<string> vectoresSiguiente{};
         vector<pair<string, string>> vectorSiguienteClean{};
         int contParOrigen = 0;
@@ -317,38 +315,40 @@ void LL1::obtieneSiguientes()
         std::sort(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         auto last = std::unique(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
         vectorSiguienteClean.erase(last, vectorSiguienteClean.end());
-                
+
         sigNoConjunto[pps.first] = vectorSiguienteClean;
     }
-   
+
     for (auto const &nt : noTerminales)
     {
-        //cout << "NT: " << nt << endl;
-        for (auto const &snc : sigNoConjunto[nt])
+        // cout << "NT: " << nt << endl;
+        for (auto const &doomie : sigNoConjunto[nt])
         {
-            cout << "\nVF: " << snc.first << " FS:" << snc.second << endl;
+            //cout << "\nVF: " << snc.first << " FS:" << snc.second << endl;
             vector<string> r{};
             siguientes(nt, r);
             std::sort(r.begin(), r.end());
             auto last = std::unique(r.begin(), r.end());
             r.erase(last, r.end());
             conjunto_siguientes[nt] = r;
-            cout <<"NT: "<< nt<<endl;
-            for(auto const &itr: r){
-                cout <<" itr:"<<itr << " ";
+            //cout << "NT: " << nt << endl;
+            /*
+            for (auto const &itr : r)
+            {
+                cout << " itr:" << itr << " ";
             }
+            */
         }
     }
-    cout << "\n\nsiguientes: "<< endl;
+    cout << "\n\nsiguientes: " << endl;
     for (auto const &vv : conjunto_siguientes)
     {
-        cout << vv.first <<endl;
-        for(auto const &rtv: vv.second)
-            cout << ":" << rtv << " ";
+        cout << vv.first << ":";
+        for (auto const &rtv : vv.second)
+            cout << " " << rtv << " ";
         cout << endl;
     }
     cout << endl;
-    
 }
 
 void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
@@ -359,64 +359,107 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
         vectorRet.push_back("$");
         cont_s++;
     }
-    cout << "busqueda: " << busqueda<< endl;
+    //cout << "busqueda: " << busqueda << endl;
     for (auto const &snc : sigNoConjunto[busqueda])
     {
         bool band_sigE = false;
-        if(!conjunto_siguientes[busqueda].empty()){
+        if (!conjunto_siguientes[busqueda].empty())
+        {
             for (auto const &i : conjunto_siguientes[busqueda])
             {
                 vectorRet.push_back(i);
-            }                        
-        }
-        else if (!snc.second.empty())
-        {            
-            cout << "snc.second no vacio: se evaluara en segundo: "<<  snc.second << " el primero es: "<< snc.first <<endl;            
-            for (auto const &cp : conjunto_primeros[snc.second])
-            {                   
-                if (cp != "ε")
-                {                                                        
-                    vectorRet.push_back(cp);
-                }else{
-                    band_sigE = true;
-                }
-                cout << endl;
             }
         }
-        else if(snc.second.empty()){
-            if(busqueda!=snc.first){
-                cout << "Solo se mandara sig: "<< snc.first << endl;
+        else if (!snc.second.empty())
+        {
+            //cout << "snc.second no vacio: se evaluara en segundo: " << snc.second << " el primero es: " << snc.first << endl;
+            for (auto const &cp : conjunto_primeros[snc.second])
+            {
+                if (cp != "ε")
+                {
+                    vectorRet.push_back(cp);
+                }
+                else
+                {
+                    band_sigE = true;
+                }
+               // cout << endl;
+            }
+        }
+        else if (snc.second.empty())
+        {
+            if (busqueda != snc.first)
+            {
+               // cout << "Solo se mandara sig: " << snc.first << endl;
                 siguientes(snc.first, vectorRet);
             }
         }
-        if(band_sigE){                                    
-            siguientes(snc.first,vectorRet);            
+        if (band_sigE)
+        {
+            siguientes(snc.first, vectorRet);
         }
         band_sigE = false;
     }
 }
-void LL1::generacionTabla(){
+void LL1::generacionTabla()
+{
     vector<string> cabezera{};
     for (auto const &t : terminales)
     {
-        cabezera.push_back(t);    
+        cabezera.push_back(t);
     }
-    map<pair<string,string>,string> mp;
-    
-    cabezera.push_back("$");        
+    map<pair<string, string>, string> mp;
+
+    cabezera.push_back("$");
     tabla.push_back(cabezera);
+    map<pair<string, string>, string> conjuntosEnTabla;
+    int cont_t = 0;
+    for (auto const &cp : conjunto_primeros)
+    {
 
-    for(auto const &t: terminales){
-        for(auto const &cp: conjunto_primeros[t]){
-            if(cp == "ε"){
-                //conjunto_siguientes[]
+        if (verificaSiEsNoTerminal(cp.first))
+        {
+            bool nohayE = false;
+            ostringstream vts;
+            copy(cp.second.begin(), cp.second.end() - 1, ostream_iterator<string>(vts, " "));
+            vts << cp.second.back(); // se agrega ultimo elemento sin identificador ','
+            string vts_s = vts.str();
+           
+            for (auto const &cps : cp.second)
+            {
+                if (cps == "ε")
+                {
+                    nohayE = true;
+                }
             }
-        }
-        cout << endl;
-    }
-    
-    
-    
-    
+            if (!nohayE)
+            {
 
+                ostringstream vts2;
+                copy(v_gramatica[cont_t].begin(), v_gramatica[cont_t].end() - 1, ostream_iterator<string>(vts2, " "));                
+                vts2 << v_gramatica[cont_t].back(); // se agrega ultimo elemento sin identificador ','
+                string vts_s2 = vts2.str();
+                conjuntosEnTabla[make_pair(cp.first, vts_s)] = vts_s2;              
+            }
+            else
+            {
+                vector<string> toS{};
+                for(auto const & cs: conjunto_siguientes[cp.first]){
+                    toS.push_back(cs);
+                }
+                ostringstream vts2;
+                copy(toS.begin(), toS.end() - 1, ostream_iterator<string>(vts2, " "));
+                vts2 <<toS.back(); // se agrega ultimo elemento sin identificador ','
+                string vts_s2 = vts2.str();
+                conjuntosEnTabla[make_pair(cp.first, vts_s2)] = "ε";               
+            }
+            nohayE = false;
+            cont_t++;
+        }
+        
+    }
+    for (auto const &i : conjuntosEnTabla)
+    {
+        cout << "Tabla: " << i.first.first << " : " << i.first.second << " = " << i.second << endl;
+    }
 }

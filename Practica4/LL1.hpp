@@ -6,6 +6,7 @@ class LL1
 {
 private:
     int cont_s=0;
+    /*
     vector<string> gramatica = { //Al ordenar la gramatica así se ejecuta más rápido
         "E -> T E’",
         "T’ -> * F T’ | ε",
@@ -13,14 +14,14 @@ private:
         "T -> F T’",                
         "E’ -> + T E’ | T ε"
         };
-    /*
+    */
     vector<string> gramatica = {
         "E -> T E’",
         "E’ -> + T E’ | ε",
         "T -> F T’",
         "T’ -> * F T’ | ε",
         "F -> id | ( E )"};
-    */ 
+     
     vector<vector<string>> tabla;
     map<string, vector<string>> conjunto_primeros; //Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
     map<string, vector<string>> conjunto_siguientes;
@@ -28,7 +29,7 @@ private:
     vector<string> noTerminales;
     vector<vector<string>> v_gramatica{};
     vector<pair<string, vector<string>>> primerosNoConjunto;
-    vector<pair<string,vector<pair<string,string>>>> sigNoConjunto;
+    map<string, vector<pair<string,string>>> sigNoConjunto;
 
 public:
     LL1()

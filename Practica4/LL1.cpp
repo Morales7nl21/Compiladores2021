@@ -273,7 +273,7 @@ void LL1::obtieneSiguientes()
                     sentencias_validas.push_back(s);
 
                     valorOrigen.push_back(i[0]);
-                    cout << "METIENDO AL PAIR: " << s << "=" << i[0] << endl;
+                   // cout << "METIENDO AL PAIR: " << s << "=" << i[0] << endl;
                 }
             }
         }
@@ -282,7 +282,7 @@ void LL1::obtieneSiguientes()
 
     for (auto &&pps : paresPorSimbolo)
     {
-        cout << pps.first << " se ha encontrado en: " << endl;
+        //cout << pps.first << " se ha encontrado en: " << endl;
         vector<string> vectoresSiguiente{};
         vector<pair<string, string>> vectorSiguienteClean{};
         int contParOrigen = 0;
@@ -320,10 +320,10 @@ void LL1::obtieneSiguientes()
 
         for (auto const &vSB : vectorSiguienteClean)
         {
-            cout << vSB.second << "padre:" << vSB.first << endl;
+            //cout << vSB.second << "padre:" << vSB.first << endl;
         }
         cout << endl;
-        sigNoConjunto.push_back(make_pair(pps.first, vectorSiguienteClean));
+        sigNoConjunto[pps.first] = vectorSiguienteClean;
     }
     /*
     E se ha encontrado en:
@@ -343,88 +343,77 @@ void LL1::obtieneSiguientes()
     εpadre:E’
     */
 
-    for (auto const &sNC : sigNoConjunto)
+    for (auto const &nt : noTerminales)
     {
-
-        vector<string> r{};
-        siguientes(sNC.first, r);
-        std::sort(r.begin(), r.end());
-        auto last = std::unique(r.begin(), r.end());
-        r.erase(last, r.end());
-        conjunto_siguientes[sNC.first] = r;
-        cout << sNC.first << " segundos: ";
-        for (auto const &i : r)
+        //cout << "NT: " << nt << endl;
+        for (auto const &snc : sigNoConjunto[nt])
         {
-            cout << i << ".";
+            cout << "\nVF: " << snc.first << " FS:" << snc.second << endl;
+            vector<string> r{};
+            siguientes(nt, r);
+            std::sort(r.begin(), r.end());
+            auto last = std::unique(r.begin(), r.end());
+            r.erase(last, r.end());
+            conjunto_siguientes[nt] = r;
+            cout <<"NT: "<< nt<<endl;
+            for(auto const &itr: r){
+                cout <<" itr:"<<itr << " ";
+            }
         }
+    }
+    cout << "\n\nsiguientes: "<< endl;
+    for (auto const &vv : conjunto_siguientes)
+    {
+        cout << vv.first <<endl;
+        for(auto const &rtv: vv.second)
+            cout << ":" << rtv << " ";
         cout << endl;
     }
+    cout << endl;
+    
 }
+
 void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
 {
+
     if (cont_s == 0)
     {
         vectorRet.push_back("$");
         cont_s++;
     }
-
-    for (auto const &vBS : sigNoConjunto)
+    cout << "busqueda: " << busqueda<< endl;
+    for (auto const &snc : sigNoConjunto[busqueda])
     {
-
-        if (vBS.first == busqueda)
-        {
-            if (!conjunto_siguientes[vBS.first].empty())
+        bool band_sigE = false;
+        if(!conjunto_siguientes[busqueda].empty()){
+            for (auto const &i : conjunto_siguientes[busqueda])
             {
-                for (auto const &cs : conjunto_siguientes[vBS.first])
-                {
-                    vectorRet.push_back(cs);
+                vectorRet.push_back(i);
+            }                        
+        }
+        else if (!snc.second.empty())
+        {            
+            cout << "snc.second no vacio: se evaluara en segundo: "<<  snc.second << " el primero es: "<< snc.first <<endl;            
+            for (auto const &cp : conjunto_primeros[snc.second])
+            {                   
+                if (cp != "ε")
+                {                                                        
+                    vectorRet.push_back(cp);
+                }else{
+                    band_sigE = true;
                 }
-            }
-            else
-            {
-
-                for (auto const &iterPares : vBS.second)
-                {
-                    cout << "BUSQUEDA: " << busqueda << " PAR  [" << iterPares.first << "][" << iterPares.second << "]" << endl;
-                    if (!iterPares.second.empty())
-                    { //
-                        cout << "CICLO 1" << endl;
-                        if (!verificaSiEsNoTerminal(iterPares.second))
-                        {
-                            for (auto const &cpb : conjunto_primeros[iterPares.second])
-                            {
-                                // cout << "CP: " << cpb << endl;
-                                if (cpb != "ε")
-                                {
-                                    vectorRet.push_back(cpb);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            cout << "CICLO 2" << endl;
-                            bool contieneEpsilon = false;
-                            for (auto const &cpb : (conjunto_primeros[iterPares.second]))
-                            {
-                                if (cpb == "ε")
-                                {
-                                    contieneEpsilon = true;
-                                    break;
-                                }
-                            }
-                            if (contieneEpsilon)
-                            {
-                                siguientes(iterPares.first, vectorRet);
-                            }
-                        }
-                    }
-                    else if (busqueda != iterPares.first)
-                    {
-                        cout << "CICLO 3" << endl;
-                        siguientes(iterPares.first, vectorRet);
-                    }
-                }
+                cout << endl;
             }
         }
+        else if(snc.second.empty()){
+            if(busqueda!=snc.first){
+                cout << "Solo se mandara sig: "<< snc.first << endl;
+                siguientes(snc.first, vectorRet);
+            }
+        }
+        if(band_sigE){                                    
+            siguientes(snc.first,vectorRet);            
+        }
+        band_sigE = false;
     }
 }

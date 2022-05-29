@@ -403,18 +403,17 @@ void LL1::generacionTabla(){
     }
     cabezera.push_back("$");        
     tabla.push_back(cabezera);
-    for(auto const &fg: v_gramatica){
-        for (auto const &cg : fg)
-        {
-            cout << cg << " ";
-        }
-        cout << endl;
-    }
-    /*
+    
+    
     for(auto const &nt: noTerminales){
-        
+        for (auto const &cz : cabezera)
+        {
+            
+            
+        }
+            
     }
-    */
+    
     
 
 }

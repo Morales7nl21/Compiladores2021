@@ -5,13 +5,13 @@ using namespace std;
 class LL1
 {
 private:
-     
+    int cont_s=0;
     vector<string> gramatica = { //Al ordenar la gramatica así se ejecuta más rápido
+        "E -> T E’",
         "T’ -> * F T’ | ε",
         "F -> id | ( E )",
-        "T -> F T’",
-        "E -> T E’",        
-        "E’ -> + T E’ | ε"
+        "T -> F T’",                
+        "E’ -> + T E’ | T ε"
         };
     /*
     vector<string> gramatica = {
@@ -23,7 +23,7 @@ private:
     */ 
     vector<vector<string>> tabla;
     map<string, vector<string>> conjunto_primeros; //Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
-    vector<vector<string>> conjunto_segundos;
+    vector<vector<string>> conjunto_siguientes;
     vector<string> terminales;
     vector<string> noTerminales;
     vector<vector<string>> v_gramatica{};
@@ -34,10 +34,10 @@ public:
     {
         asignaTermNoTermYProduc();
         obtienePrimeros();
-        obtieneSegundos();
+        obtieneSiguientes();
     }
     void obtienePrimeros();
-    void obtieneSegundos();
+    void obtieneSiguientes();
     void asignaTermNoTermYProduc();
     /*
         El primer parametro hace referencia al simbolo del cual se busca su primero

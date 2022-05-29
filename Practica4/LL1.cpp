@@ -45,7 +45,7 @@ void LL1::primeros(const vector<string> &elementoAbuscarPrimero, vector<string> 
         {
             if (conjunto_primeros.find(eAP) != conjunto_primeros.end())
             {
-                
+
                 for (auto const &cpf : conjunto_primeros[eAP])
                 {
                     bool band_existeE = false;
@@ -207,6 +207,119 @@ void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y 
     cout << endl
          << endl;
 }
-void LL1::obtieneSegundos()
+void LL1::obtieneSiguientes()
 {
+    vector<vector<string>> cv_gramatica = v_gramatica;
+    vector<pair<string, vector<vector<string>>>> conjuntoParBusqueda{};
+    vector<pair<string, pair<vector<string>,vector<string>>>> paresPorSimbolo{}; // Ocupara los pares de simbolo y string donde se encuentra de todas las cadenas
+    // Limpiar data y asignacion de vector de vectores de string pa cada terminal
+    int cont = 0;
+    for (auto const &nt : noTerminales)
+    {
+        vector<vector<string>> conjuntoBusqueda{};
+
+        for (auto &vg : cv_gramatica)
+        {
+            cont = 0;
+            for (auto const &vgc : vg)
+            {
+                if (cont > 1 && vgc == nt)
+                {
+                    conjuntoBusqueda.push_back(vg);
+                    break;
+                }
+                cont++;
+            }
+        }
+        conjuntoParBusqueda.push_back(make_pair(nt, conjuntoBusqueda));
+    }
+    for (auto const &conjuntoParesBS : conjuntoParBusqueda)
+    {
+        vector<string> sentencias_validas{}; // Contendrá solo las producciones que tienen al sig del elemento a buscar
+        vector<string> valorOrigen{};
+        for (auto const &i : conjuntoParesBS.second)
+        {
+
+            ostringstream vts;
+            copy(i.begin(), i.end() - 1, ostream_iterator<string>(vts, " "));
+            vts << i.back();          // se agrega ultimo elemento sin identificador ','
+            string vts_s = vts.str(); // contiene el elemento que va despues del simbolo de produce "->"
+
+            vector<string> delimitadores{"->", " "};
+            vector<string> sentencias{}; // contiene todas las producciones despues de or '|'
+
+            leftTrim(vts_s, delimitadores[0]); // Cortamos la cadena hasta -> por izquierda
+
+            sentencias = split(vts_s, '|');
+
+            for (auto &&s : sentencias)
+            {
+
+                if (s[0] == ' ')
+                    s = s.substr(1, s.size());
+                if (s[s.size() - 1] == ' ')
+                    s = s.substr(0, s.size() - 1);
+               
+                vector<string> busquedaDondeNoEsta = split(s, ' '); // Volvemos a dividir los grupos ya limpios de spaces en un vector de string para ver si esta ahí el elemento
+                if (any_of(busquedaDondeNoEsta.begin(), busquedaDondeNoEsta.end(), [&](const string &elem)
+                           { return elem == conjuntoParesBS.first; }))
+                { // se checa si esta en todos los grupos encontrados
+                    sentencias_validas.push_back(s);
+                    
+                    valorOrigen.push_back(i[0]);
+                    cout<<"METIENDO AL PAIR: " << s << "="<< i[0] << endl;
+                }
+            }
+        }
+        paresPorSimbolo.push_back(make_pair(conjuntoParesBS.first,make_pair(valorOrigen,sentencias_validas) ));
+    }
+
+    for (auto &&pps : paresPorSimbolo)
+    {
+        cout << pps.first << " se ha encontrado en: " << endl;
+        vector<string> vectoresSiguiente{};
+        vector<pair<string,string>> vectorSiguienteClean{};
+        int contParOrigen  = 0;  
+        for (auto &&ppsv : pps.second.second)
+        {                        
+            vector<string> vectoresPorStringDondeSeEncontro = split(ppsv, ' ');
+            auto ret = std::find_if(vectoresPorStringDondeSeEncontro.begin(), vectoresPorStringDondeSeEncontro.end(),
+                                    [&](string s)
+                                    { return s == pps.first; });
+
+            int contVectoresBuenos = 0;
+              
+            for (auto const &vsS : vectoresPorStringDondeSeEncontro)
+            {
+
+                if (contVectoresBuenos > ret - vectoresPorStringDondeSeEncontro.begin() && ret != vectoresPorStringDondeSeEncontro.end())
+                {
+                    vectoresSiguiente.push_back(vsS);
+                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen],vsS));                    
+                }else if(ret+1 == vectoresPorStringDondeSeEncontro.end()){
+                    string nada= "";
+                    vectorSiguienteClean.push_back(make_pair(pps.second.first[contParOrigen],nada)); 
+                }
+                
+                
+                contVectoresBuenos++;               
+                
+            } 
+            contParOrigen++;            
+        }
+       
+                
+        std::sort(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
+        auto last = std::unique(vectorSiguienteClean.begin(), vectorSiguienteClean.end());
+        vectorSiguienteClean.erase(last, vectorSiguienteClean.end());
+
+        
+        for (auto const &vSB : vectorSiguienteClean)
+        {            
+            cout << vSB.second<< "padre:"<<vSB.first << endl;
+        }
+        
+
+        cout << endl;
+    }
 }

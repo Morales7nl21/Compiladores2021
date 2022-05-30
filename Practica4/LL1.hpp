@@ -16,12 +16,23 @@ private:
         };
     */
     vector<string> gramatica = {
+        "E -> T E’", //cont 0
+        "E’ -> + T E’ | ε", // cont 1 -2  si es cont 1 -> imprma cont +1 = 2 
+        "T -> F T’", // cont 2
+        "T’ -> * F T’ | ε", // cont 3 si es e cont +1
+        "F -> id | ( E )"}; // cont 4 si bool f es true  cont +1
+    vector<string> gramatica_sO = {
         "E -> T E’",
-        "E’ -> + T E’ | ε",
+        "E’ -> + T E’",
+        "E’ -> ε",
         "T -> F T’",
-        "T’ -> * F T’ | ε",
-        "F -> id | ( E )"};
-     
+        "T’ -> ε",
+        "T’ -> ε",
+        "F -> id",
+        "F -> ( E )"
+    };
+    string tablaFinal[6][7];
+    vector<vector<string>> v_sO_gramatica{};
     vector<vector<string>> tabla;
     map<string, vector<string>> conjunto_primeros; //Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
     map<string, vector<string>> conjunto_siguientes;

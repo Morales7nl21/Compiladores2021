@@ -118,8 +118,17 @@ void LL1::asignaTermNoTermYProduc()
         istream_iterator<std::string> end;
         vector<std::string> vector_gramatica(begin, end);
         noTerminales.push_back(vector_gramatica[0]);
-        v_gramatica.push_back(vector_gramatica);
+        v_gramatica.push_back(vector_gramatica);                        
     }
+    for (auto const &i : gramatica_sO)
+    {
+        stringstream ss_sO(i);
+        istream_iterator<std::string> begin2(ss_sO);
+        istream_iterator<std::string> end2;
+        vector<std::string> vector_gramatica_sO(begin2, end2);
+        v_sO_gramatica.push_back(vector_gramatica_sO);
+    }
+    
     // Despues de que sabemos cuales son los no temrinales recorremos cada vector de la gramatica para sacar lso terminales
     bool banderaTerminalEncontrado = false;
     for (auto const &vector : v_gramatica)
@@ -199,15 +208,15 @@ void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y 
         conjunto_primeros[ctp] = cr;
     }
 
-    cout << "Primeros" << endl;
+    std::cout << "Primeros" << endl;
     for (auto const &cp : conjunto_primeros)
     {
-        cout << cp.first << ": ";
+        std::cout << cp.first << ": ";
         for (auto const &i : cp.second)
         {
-            cout << i << " ";
+            std::cout << i << " ";
         }
-        cout << endl;
+        std::cout << endl;
     }
 
 }
@@ -340,15 +349,15 @@ void LL1::obtieneSiguientes()
             */
         }
     }
-    cout << "\n\nsiguientes: " << endl;
+    std::cout << "\n\nsiguientes: " << endl;
     for (auto const &vv : conjunto_siguientes)
     {
-        cout << vv.first << ":";
+        std::cout << vv.first << ":";
         for (auto const &rtv : vv.second)
-            cout << " " << rtv << " ";
-        cout << endl;
+            std::cout << " " << rtv << " ";
+        std::cout << endl;
     }
-    cout << endl;
+    std::cout << endl;
 }
 
 void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
@@ -404,57 +413,64 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
 void LL1::generacionTabla()
 {
     vector<string> cabezera{};
+    cabezera.push_back("M");
     for (auto const &t : terminales)
     {
-        cabezera.push_back(t);
+        if(t!="ε") cabezera.push_back(t);
     }
     map<pair<string, string>, string> mp;
 
     cabezera.push_back("$");
     tabla.push_back(cabezera);
     map<pair<string, string>, string> conjuntosEnTabla;
-    int cont_t = 0;
+    
+    
     for (auto const &cp : conjunto_primeros)
     {
-
+        
         if (verificaSiEsNoTerminal(cp.first))
-        {
-            bool nohayE = false;
-            ostringstream vts;
-            copy(cp.second.begin(), cp.second.end() - 1, ostream_iterator<string>(vts, " "));
-            vts << cp.second.back(); // se agrega ultimo elemento sin identificador ','
-            string vts_s = vts.str();
-           
-            for (auto const &cps : cp.second)
-            {
-                if (cps == "ε")
+        {                            
+            
+            if(cp.first == "E"){
+                for (auto const &prodD : cp.second)
                 {
-                    nohayE = true;
+                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "E -> T E’";    
+                }                                
+            }else if(cp.first == "E’"){
+                for (auto const &prodD : cp.second)
+                {
+                    if(prodD == "ε"){
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> ε";    
+                    }else{
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> + T E’";    
+                    }
+                    
+                }                
+            }else if(cp.first == "T"){
+                for (auto const &prodD : cp.second){
+                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "T -> F T’";    
+                }
+            }else if(cp.first == "T’"){
+                for (auto const &prodD : cp.second)
+                {
+                    if(prodD == "ε"){
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> ε";    
+                    }else{
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> * F T’";    
+                    }
+                    
+                }
+            }else if(cp.first == "F"){
+                for (auto const &prodD : cp.second)
+                {
+                    if(prodD == "id"){
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> id";    
+                    }else{
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> ( E )";    
+                    }
+                    
                 }
             }
-            if (!nohayE)
-            {
-
-                ostringstream vts2;
-                copy(v_gramatica[cont_t].begin(), v_gramatica[cont_t].end() - 1, ostream_iterator<string>(vts2, " "));                
-                vts2 << v_gramatica[cont_t].back(); // se agrega ultimo elemento sin identificador ','
-                string vts_s2 = vts2.str();
-                conjuntosEnTabla[make_pair(cp.first, vts_s)] = vts_s2;              
-            }
-            else
-            {
-                vector<string> toS{};
-                for(auto const & cs: conjunto_siguientes[cp.first]){
-                    toS.push_back(cs);
-                }
-                ostringstream vts2;
-                copy(toS.begin(), toS.end() - 1, ostream_iterator<string>(vts2, " "));
-                vts2 <<toS.back(); // se agrega ultimo elemento sin identificador ','
-                string vts_s2 = vts2.str();
-                conjuntosEnTabla[make_pair(cp.first, vts_s2)] = "ε";               
-            }
-            nohayE = false;
-            cont_t++;
         }
         
     }
@@ -462,4 +478,67 @@ void LL1::generacionTabla()
     {
         cout << "Tabla: " << i.first.first << " : " << i.first.second << " = " << i.second << endl;
     }
+    
+    vector<string> primerColumna = {
+        "M",
+        "E",
+        "E’",
+        "T",
+        "T’",
+        "F"
+    };
+    for (int i = 0; i <  6; i++)
+    {
+        
+        for (int j = 0; j < 7; j++)
+        {
+            if(j==0){
+                if(i==0) tablaFinal[i][j] = primerColumna[i];
+                if(i==1) tablaFinal[i][j] = primerColumna[i];
+                if(i==2) tablaFinal[i][j] = primerColumna[i];
+                if(i==3) tablaFinal[i][j] = primerColumna[i];
+                if(i==4) tablaFinal[i][j] = primerColumna[i];
+                if(i==5) tablaFinal[i][j] = primerColumna[i];
+            }
+            if(i==0){                
+                if(j>0)tablaFinal[i][j] = cabezera[j];                
+            }else if(i>0 && j> 0){
+                string v1 = primerColumna[i];
+                string v2 = cabezera[j];                
+                if(v2 == "$"){
+                    v2 = "ε";
+                }
+                auto pairV1V2 = make_pair(v1,v2);
+               if(!conjuntosEnTabla[pairV1V2].empty()){
+                   
+                   tablaFinal[i][j] = conjuntosEnTabla[pairV1V2];
+               }else{
+                   tablaFinal[i][j] = "error";
+               }
+            }
+        }
+        
+    }
+    
+    
+
+
+    cout << endl;
+    cout << "Tabla Final" << endl;
+    for (int i = 0; i <  6; i++)
+    {
+        for (int j = 0; j < 7; j++)
+        {
+            if(i == 0){
+                cout <<"\t" <<tablaFinal[i][j] << "\t";
+            }
+            else if(tablaFinal[i][j] == "error")
+                cout <<"\t" <<tablaFinal[i][j] << "\t";
+            else{
+                cout <<"\t" <<tablaFinal[i][j] << " ";
+            }
+        }
+        cout << endl;
+    }
+    
 }

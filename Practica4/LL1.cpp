@@ -487,12 +487,7 @@ void LL1::generacionTabla()
             }
         }
         
-    }
-    for (auto const &i : conjuntosEnTabla)
-    {
-        cout << "Tabla: " << i.first.first << " : " << i.first.second << " = " << i.second << endl;
-    }
-    
+    }        
     vector<string> primerColumna = {
         "M",
         "E",

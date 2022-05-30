@@ -439,8 +439,15 @@ void LL1::generacionTabla()
             }else if(cp.first == "E’"){
                 for (auto const &prodD : cp.second)
                 {
-                    if(prodD == "ε"){
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> ε";    
+                    if(prodD == "ε"){                        
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> ε";   
+                        if(!conjunto_siguientes[cp.first].empty()){
+                            for (auto const &cs : conjunto_siguientes[cp.first])
+                            {
+                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";   
+                            }
+                            
+                        }
                     }else{
                         conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> + T E’";    
                     }
@@ -454,7 +461,14 @@ void LL1::generacionTabla()
                 for (auto const &prodD : cp.second)
                 {
                     if(prodD == "ε"){
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> ε";    
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> ε";   
+                        if(!conjunto_siguientes[cp.first].empty()){
+                            for (auto const &cs : conjunto_siguientes[cp.first])
+                            {
+                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";   
+                            }
+                            
+                        } 
                     }else{
                         conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> * F T’";    
                     }

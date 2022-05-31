@@ -118,7 +118,7 @@ void LL1::asignaTermNoTermYProduc()
         istream_iterator<std::string> end;
         vector<std::string> vector_gramatica(begin, end);
         noTerminales.push_back(vector_gramatica[0]);
-        v_gramatica.push_back(vector_gramatica);                        
+        v_gramatica.push_back(vector_gramatica);
     }
     for (auto const &i : gramatica_sO)
     {
@@ -128,7 +128,7 @@ void LL1::asignaTermNoTermYProduc()
         vector<std::string> vector_gramatica_sO(begin2, end2);
         v_sO_gramatica.push_back(vector_gramatica_sO);
     }
-    
+
     // Despues de que sabemos cuales son los no temrinales recorremos cada vector de la gramatica para sacar lso terminales
     bool banderaTerminalEncontrado = false;
     for (auto const &vector : v_gramatica)
@@ -218,7 +218,6 @@ void LL1::obtienePrimeros() // Aqui ademas se tiene el conjunto de terminales y 
         }
         std::cout << endl;
     }
-
 }
 void LL1::obtieneSiguientes()
 {
@@ -333,14 +332,14 @@ void LL1::obtieneSiguientes()
         // cout << "NT: " << nt << endl;
         for (auto const &doomie : sigNoConjunto[nt])
         {
-            //cout << "\nVF: " << snc.first << " FS:" << snc.second << endl;
+            // cout << "\nVF: " << snc.first << " FS:" << snc.second << endl;
             vector<string> r{};
             siguientes(nt, r);
             std::sort(r.begin(), r.end());
             auto last = std::unique(r.begin(), r.end());
             r.erase(last, r.end());
             conjunto_siguientes[nt] = r;
-            //cout << "NT: " << nt << endl;
+            // cout << "NT: " << nt << endl;
             /*
             for (auto const &itr : r)
             {
@@ -368,7 +367,7 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
         vectorRet.push_back("$");
         cont_s++;
     }
-    //cout << "busqueda: " << busqueda << endl;
+    // cout << "busqueda: " << busqueda << endl;
     for (auto const &snc : sigNoConjunto[busqueda])
     {
         bool band_sigE = false;
@@ -381,7 +380,7 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
         }
         else if (!snc.second.empty())
         {
-            //cout << "snc.second no vacio: se evaluara en segundo: " << snc.second << " el primero es: " << snc.first << endl;
+            // cout << "snc.second no vacio: se evaluara en segundo: " << snc.second << " el primero es: " << snc.first << endl;
             for (auto const &cp : conjunto_primeros[snc.second])
             {
                 if (cp != "ε")
@@ -392,14 +391,14 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
                 {
                     band_sigE = true;
                 }
-               // cout << endl;
+                // cout << endl;
             }
         }
         else if (snc.second.empty())
         {
             if (busqueda != snc.first)
             {
-               // cout << "Solo se mandara sig: " << snc.first << endl;
+                // cout << "Solo se mandara sig: " << snc.first << endl;
                 siguientes(snc.first, vectorRet);
             }
         }
@@ -412,142 +411,168 @@ void LL1::siguientes(const string &busqueda, vector<string> &vectorRet)
 }
 void LL1::generacionTabla()
 {
-    vector<string> cabezera{};
+
     cabezera.push_back("M");
     for (auto const &t : terminales)
     {
-        if(t!="ε") cabezera.push_back(t);
+        if (t != "ε")
+            cabezera.push_back(t);
     }
     map<pair<string, string>, string> mp;
 
     cabezera.push_back("$");
     tabla.push_back(cabezera);
     map<pair<string, string>, string> conjuntosEnTabla;
-    
-    
+
     for (auto const &cp : conjunto_primeros)
     {
-        
+
         if (verificaSiEsNoTerminal(cp.first))
-        {                            
-            
-            if(cp.first == "E"){
+        {
+
+            if (cp.first == "E")
+            {
                 for (auto const &prodD : cp.second)
                 {
-                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "E -> T E’";    
-                }                                
-            }else if(cp.first == "E’"){
+                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "E -> T E’";
+                }
+            }
+            else if (cp.first == "E’")
+            {
                 for (auto const &prodD : cp.second)
                 {
-                    if(prodD == "ε"){                        
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> ε";   
-                        if(!conjunto_siguientes[cp.first].empty()){
+                    if (prodD == "ε")
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> ε";
+                        if (!conjunto_siguientes[cp.first].empty())
+                        {
                             for (auto const &cs : conjunto_siguientes[cp.first])
                             {
-                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";   
+                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";
                             }
-                            
                         }
-                    }else{
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> + T E’";    
                     }
-                    
-                }                
-            }else if(cp.first == "T"){
-                for (auto const &prodD : cp.second){
-                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "T -> F T’";    
+                    else
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "E’ -> + T E’";
+                    }
                 }
-            }else if(cp.first == "T’"){
+            }
+            else if (cp.first == "T")
+            {
                 for (auto const &prodD : cp.second)
                 {
-                    if(prodD == "ε"){
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> ε";   
-                        if(!conjunto_siguientes[cp.first].empty()){
+                    conjuntosEnTabla[make_pair(cp.first, prodD)] = "T -> F T’";
+                }
+            }
+            else if (cp.first == "T’")
+            {
+                for (auto const &prodD : cp.second)
+                {
+                    if (prodD == "ε")
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> ε";
+                        if (!conjunto_siguientes[cp.first].empty())
+                        {
                             for (auto const &cs : conjunto_siguientes[cp.first])
                             {
-                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";   
+                                conjuntosEnTabla[make_pair(cp.first, cs)] = "E’ -> ε";
                             }
-                            
-                        } 
-                    }else{
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> * F T’";    
+                        }
                     }
-                    
+                    else
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "T’ -> * F T’";
+                    }
                 }
-            }else if(cp.first == "F"){
+            }
+            else if (cp.first == "F")
+            {
                 for (auto const &prodD : cp.second)
                 {
-                    if(prodD == "id"){
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> id";    
-                    }else{
-                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> ( E )";    
+                    if (prodD == "id")
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> id";
                     }
-                    
+                    else
+                    {
+                        conjuntosEnTabla[make_pair(cp.first, prodD)] = "F -> ( E )";
+                    }
                 }
             }
         }
-        
-    }        
-    vector<string> primerColumna = {
+    }
+    primerColumna = {
         "M",
         "E",
         "E’",
         "T",
         "T’",
-        "F"
-    };
-    for (int i = 0; i <  6; i++)
+        "F"};
+    for (int i = 0; i < 6; i++)
     {
-        
+
         for (int j = 0; j < 7; j++)
         {
-            if(j==0){
-                if(i==0) tablaFinal[i][j] = primerColumna[i];
-                if(i==1) tablaFinal[i][j] = primerColumna[i];
-                if(i==2) tablaFinal[i][j] = primerColumna[i];
-                if(i==3) tablaFinal[i][j] = primerColumna[i];
-                if(i==4) tablaFinal[i][j] = primerColumna[i];
-                if(i==5) tablaFinal[i][j] = primerColumna[i];
+            if (j == 0)
+            {
+                if (i == 0)
+                    tablaFinal[i][j] = primerColumna[i];
+                if (i == 1)
+                    tablaFinal[i][j] = primerColumna[i];
+                if (i == 2)
+                    tablaFinal[i][j] = primerColumna[i];
+                if (i == 3)
+                    tablaFinal[i][j] = primerColumna[i];
+                if (i == 4)
+                    tablaFinal[i][j] = primerColumna[i];
+                if (i == 5)
+                    tablaFinal[i][j] = primerColumna[i];
             }
-            if(i==0){                
-                if(j>0)tablaFinal[i][j] = cabezera[j];                
-            }else if(i>0 && j> 0){
+            if (i == 0)
+            {
+                if (j > 0)
+                    tablaFinal[i][j] = cabezera[j];
+            }
+            else if (i > 0 && j > 0)
+            {
                 string v1 = primerColumna[i];
-                string v2 = cabezera[j];                
-                if(v2 == "$"){
+                string v2 = cabezera[j];
+                if (v2 == "$")
+                {
                     v2 = "ε";
                 }
-                auto pairV1V2 = make_pair(v1,v2);
-               if(!conjuntosEnTabla[pairV1V2].empty()){
-                   
-                   tablaFinal[i][j] = conjuntosEnTabla[pairV1V2];
-               }else{
-                   tablaFinal[i][j] = "error";
-               }
+                auto pairV1V2 = make_pair(v1, v2);
+                if (!conjuntosEnTabla[pairV1V2].empty())
+                {
+
+                    tablaFinal[i][j] = conjuntosEnTabla[pairV1V2];
+                }
+                else
+                {
+                    tablaFinal[i][j] = "error";
+                }
             }
         }
-        
     }
-    
-    
-
 
     cout << endl;
     cout << "Tabla Final" << endl;
-    for (int i = 0; i <  6; i++)
+    for (int i = 0; i < 6; i++)
     {
         for (int j = 0; j < 7; j++)
         {
-            if(i == 0){
-                cout <<"\t" <<tablaFinal[i][j] << "\t";
+            if (i == 0)
+            {
+                cout << "\t" << tablaFinal[i][j] << "\t";
             }
-            else if(tablaFinal[i][j] == "error")
-                cout <<"\t" <<tablaFinal[i][j] << "\t";
-            else{
-                cout <<"\t" <<tablaFinal[i][j] << " ";
+            else if (tablaFinal[i][j] == "error")
+                cout << "\t" << tablaFinal[i][j] << "\t";
+            else
+            {
+                cout << "\t" << tablaFinal[i][j] << " ";
             }
         }
         cout << endl;
     }
-    
 }

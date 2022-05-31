@@ -5,20 +5,21 @@ using namespace std;
 class LL1
 {
 private:
-    int cont_s=0;
+    int cont_s = 0;
+
     /*
     vector<string> gramatica = { //Al ordenar la gramatica así se ejecuta más rápido
         "E -> T E’",
         "T’ -> * F T’ | ε",
         "F -> id | ( E )",
-        "T -> F T’",                
+        "T -> F T’",
         "E’ -> + T E’ | T ε"
         };
     */
     vector<string> gramatica = {
-        "E -> T E’", //cont 0
-        "E’ -> + T E’ | ε", // cont 1 -2  si es cont 1 -> imprma cont +1 = 2 
-        "T -> F T’", // cont 2
+        "E -> T E’",        // cont 0
+        "E’ -> + T E’ | ε", // cont 1 -2  si es cont 1 -> imprma cont +1 = 2
+        "T -> F T’",        // cont 2
         "T’ -> * F T’ | ε", // cont 3 si es e cont +1
         "F -> id | ( E )"}; // cont 4 si bool f es true  cont +1
     vector<string> gramatica_sO = {
@@ -29,21 +30,22 @@ private:
         "T’ -> ε",
         "T’ -> ε",
         "F -> id",
-        "F -> ( E )"
-    };
-    string tablaFinal[6][7];
+        "F -> ( E )"};
+
     vector<vector<string>> v_sO_gramatica{};
     vector<vector<string>> tabla;
-    map<string, vector<string>> conjunto_primeros; //Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
+    map<string, vector<string>> conjunto_primeros; // Aqui se almacenan los primeros donde la llave es el terminal al que se le busca el primero
     map<string, vector<string>> conjunto_siguientes;
     vector<string> terminales;
     vector<string> noTerminales;
     vector<vector<string>> v_gramatica{};
     vector<pair<string, vector<string>>> primerosNoConjunto;
-    map<string, vector<pair<string,string>>> sigNoConjunto;
-    
+    map<string, vector<pair<string, string>>> sigNoConjunto;
 
 public:
+    string tablaFinal[6][7];
+    vector<string> cabezera{};
+    vector<string> primerColumna{};
     LL1()
     {
         asignaTermNoTermYProduc();
@@ -59,7 +61,7 @@ public:
         el segundo parametro hace referencia al primer elemento despues del simbolo '->'
         el tercer parametro hace referencia al conjunto que guardará sus primeros
     */
-    void primeros( const vector<string> &, vector<string> &);
+    void primeros(const vector<string> &, vector<string> &);
     void siguientes(const string &, vector<string> &);
     void generacionTabla();
     void ProbarCadena(string);
@@ -67,7 +69,7 @@ public:
     void GetnoTerminales();
     vector<string> verificaPrimero(string);
     bool verificaSiEsNoTerminal(string);
-    
+
     void imprimeGramatica()
     {
         for (auto const &g : gramatica)
@@ -82,9 +84,16 @@ public:
     }
     string &rightTrim(string &str, string const &chars)
     {
-        str.erase(str.find_first_of(chars)+1);
+        str.erase(str.find_first_of(chars) + 1);
         return str;
     }
+
+    string &corte(string &str, string const &chars)
+    {
+        str.erase(0, str.find_first_of(chars) + 2);
+        return str;
+    }
+
     vector<string> split(const string &s, char seperator)
     {
         vector<std::string> output;

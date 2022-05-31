@@ -5,63 +5,143 @@ using namespace std;
 
 LL1 *l1 = new LL1();
 
-int ingresarCadena()
+int ingresarCadena(vector<string> cadena)
 {
-    vector<string> cadena = {"("};
-    int s1, s2;
-    queue<string> pila{};
+    cout << "Cadena:" << endl;
+    for (auto const &c : cadena)
+    {
+        cout << c;
+    }
+    cout << endl;
+
+    stack<string> pila{};
     pila.push("$");
     pila.push("E");
-    // cin >> cadena;
-    //  id+id*id
-    //  Concatenar $; $id+id*id
-    //  Recorremos cadena
-    for (auto &c1 : cadena)
+
+    //cout << "valores en pila INICIO " << endl;
+    /*
+    stack<string> tmp_q = pila; // copy the original queue to the temporary queue
+    while (!tmp_q.empty())
     {
+        cout << "queue:" << tmp_q.top() << endl;
+        tmp_q.pop();
+    }
+    */
+    int cont = 0;
+    int prueba = 0;
+    bool cadena_valida = false;
+
+    while (cont < cadena.size())
+    {
+
+        string valor_tabla;
         int indice_cabe = 0;
+        //cout << "CADENA c: " << cadena[cont] << endl;
+        if (cadena_valida == true)
+        {
+            break;
+        }
+        // obtenemos id´s para obtener posicion en tabla
         for (const auto &c2 : l1->cabezera)
         {
-            if (c2 == c1)
-            {
-                cout << indice_cabe;
+            if (c2 == cadena[cont])
                 break;
+            else
+            {
+                indice_cabe++;
             }
-            indice_cabe++;
         }
         int indice_primerColumna = 0;
         for (const auto &c3 : l1->primerColumna)
         {
-            if (pila.back() == c3)
+            if (pila.top() == c3)
+                break;
+            indice_primerColumna++;
+        }
+        if (pila.empty())
+        {
+            cout << "NO VALIDA, pila vacia, cadena no aceptada" << endl;
+            cadena_valida = true;
+            break;
+        }
+        if (cadena[cont] == pila.top() && pila.top() == "$")
+        {
+            cout << "ACEPTADA" << endl;
+            break;
+        }
+      
+        
+        else if (cadena[cont] == pila.top())
+        {
+            //cout << "Sacando ya que son iguales" << endl;
+            cont++;
+            if (pila.empty())
             {
-                cout << indice_primerColumna;
+                cadena_valida = true;
                 break;
             }
+            else
+                pila.pop();
         }
-        string simbolo_mayor = ">";
-        string valor_tabla = l1->tablaFinal[indice_primerColumna + 1][indice_cabe];
-        cout << valor_tabla;
-        l1->corte(valor_tabla, simbolo_mayor);
-        cout << "\n"
-             << valor_tabla;
-        pila.pop();
-        // string valor_tabla_rever(valor_tabla.rbegin(), valor_tabla.rend());
-        auto sentencias = l1->split(valor_tabla, ' ');
-        for (const auto &vtr : sentencias)
+        else
         {
-            if (vtr != " ")
+            //IMP valor en pila
+            string simbolo_mayor = ">";
+            valor_tabla = l1->tablaFinal[indice_primerColumna][indice_cabe]; // Obtenemos la produccion como string
+
+            l1->corte(valor_tabla, simbolo_mayor); // Cortamos lo que va despues del simbolo "->" ya que nos interesa el resultado de lo que
+            // produce
+            auto sentencias = l1->split(valor_tabla, ' '); // Dividimos el string en vector<string> con separador de ' '
+            reverse(sentencias.begin(), sentencias.end()); // Volteamos el vector de string resultado para añadir a la pila
+            pila.pop();
+            for (const auto &vtr : sentencias)
             {
-                string valor_tabla_rever(vtr.rbegin(), vtr.rend());
-                pila.push(valor_tabla_rever);
-                cout << "\n\nMetiendo en pila: " << valor_tabla_rever;
+               // cout << "VTR: " << vtr << endl;
+                if (vtr == "ε")
+                {
+                    continue;
+                }
+                else if (vtr == "rror" || vtr.size() < 1)
+                {
+                    cout << "NO VALIDA" << endl;
+                    cadena_valida = true;
+                    break;
+                }
+                else if (vtr != " ")
+                {
+                   // cout << "metiendo en pila : " << vtr << endl;
+                    pila.push(vtr);
+                }
             }
         }
+        prueba++;
     }
 }
 
 int main()
 {
+    /*
 
-    ingresarCadena();
+        */
+    vector<vector<string>> sentencias = {
+
+        {"(", "id", "+", "id", ")", "$"},
+        {"id", "+", "id", "$"},
+        {"id", "+", "id", "*", "id", "$"},
+        {"id", "*", "id", "$"},
+        {"id", "+", "id", "$"},
+        {"(", "id", ")", "$"},
+        {"(", "id", "+", "id", ")", "*", "id", "$"},
+        {"id", "+", "(", "id", "*", "id", ")", "$"},
+        {")", "id", "$"},
+        {"(", "id", "$"},
+        {"id", "+", "id", "*", "$"}};
+    for (auto const &cadena : sentencias)
+    {
+
+        ingresarCadena(cadena);
+    }
+
     // ll1->imprimeGramatica();
     return 0;
 }

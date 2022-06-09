@@ -45,9 +45,38 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             {
                 cout << "Numero posible " << v << endl;
                 lexemaYToken[idToken] = (make_pair(v, "Numero"));
-            }else if(regex_match(v,regexD)){
-                cout << "Simbolo Posible " << v << endl;
-                lexemaYToken[idToken] = (make_pair(v, "Simbolo"));
+            }
+            else if (regex_match(v, regexD))
+            {
+                if (v == "+")
+                {
+                    cout << "Simbolo suma " << v << endl;
+                    lexemaYToken[idToken] = (make_pair(v, "Suma"));
+                }
+
+                else if (v == "-")
+                {
+                    cout << "Simbolo resta " << v << endl;
+                    lexemaYToken[idToken] = (make_pair(v, "Resta"));
+                }
+
+                else if (v == "*")
+                {
+                    cout << "Simbolo multiplicacion " << v << endl;
+                    lexemaYToken[idToken] = (make_pair(v, "Multiplicacion"));
+                }
+
+                else if (v == "/")
+                {
+                     cout << "Simbolo divison " << v << endl;
+                    lexemaYToken[idToken] = (make_pair(v, "Division"));
+                }
+
+                else
+                {
+                    cout << "Simbolo Posible " << v << endl;
+                    lexemaYToken[idToken] = (make_pair(v, "Simbolo"));
+                }
             }
             else if (idxPosicion == v.size())
             {
@@ -119,12 +148,11 @@ int AnalizadorLexico::esPosibleNombre(string nombre)
         cont++;
         tmpC.clear();
     }
-    if(regex_search(nombre,regexA) || regex_search(nombre,regexB) || regex_search(nombre,regexF) || regex_search(nombre,regexP) || regex_search(nombre,regexC) || regex_match(nombre,regexD)){
+    if (regex_search(nombre, regexA) || regex_search(nombre, regexB) || regex_search(nombre, regexF) || regex_search(nombre, regexP) || regex_search(nombre, regexC) || regex_match(nombre, regexD))
+    {
         return nombre.size();
     }
     return 0;
-    
-    
 }
 int AnalizadorLexico::esPosibleFuncion(string nombre, int id)
 {

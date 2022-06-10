@@ -29,70 +29,154 @@ bool AnalizadorLexico::analizaArchivo(string cad)
     regex regexF("[_]+");
 
     vector<string> vectoresPorStringDeCadaOracion = split(cad, ' ');
-    map<int, pair<string, string>> lexemaYToken{};
+    map<pair<string, string>, int> lexemaYToken{};
+    map<int, pair<string, string>> lexemaYTokenOrdenados{};
+
     int idToken = 0;
+    int idx = 0;
     for (auto const &v : vectoresPorStringDeCadaOracion)
     {
+
         if (esPalReservada(v))
         {
             cout << "Palabra reservada  " << v << endl;
-            lexemaYToken[idToken] = (make_pair(v, "Palabra reservada"));
+            lexemaYToken[make_pair("Palabra reservada", v)] = idToken;
+            idx += v.size();
         }
         else
         {
             int idxPosicion = esPosibleNombre(v);
             if (regex_match(v, regexC))
             {
-                cout << "Numero posible " << v << endl;
-                lexemaYToken[idToken] = (make_pair(v, "Numero"));
+                // cout << "Numero posible " << v << endl;
+                lexemaYToken[make_pair("Numero", v)] = idToken;
+                idx += v.size();
             }
             else if (regex_match(v, regexD))
             {
                 if (v == "+")
                 {
-                    cout << "Simbolo suma " << v << endl;
-                    lexemaYToken[idToken] = (make_pair(v, "Suma"));
+                    // cout << "Simbolo suma " << v << endl;
+                    lexemaYToken[make_pair("Suma", v)] = idToken;
+                    idx += v.size();
                 }
 
                 else if (v == "-")
                 {
-                    cout << "Simbolo resta " << v << endl;
-                    lexemaYToken[idToken] = (make_pair(v, "Resta"));
+                    // cout << "Simbolo resta " << v << endl;
+                    lexemaYToken[make_pair("Resta", v)] = idToken;
+                    idx += v.size();
                 }
 
                 else if (v == "*")
                 {
-                    cout << "Simbolo multiplicacion " << v << endl;
-                    lexemaYToken[idToken] = (make_pair(v, "Multiplicacion"));
+                    // cout << "Simbolo multiplicacion " << v << endl;
+
+                    lexemaYToken[make_pair("Multiplicacion", v)] = idToken;
+                    idx += v.size();
                 }
 
                 else if (v == "/")
                 {
-                     cout << "Simbolo divison " << v << endl;
-                    lexemaYToken[idToken] = (make_pair(v, "Division"));
+                    // cout << "Simbolo divison " << v << endl;
+                    lexemaYToken[make_pair("Division", v)] = idToken;
+                    idx += v.size();
                 }
 
-                else
+                else if (v == "(")
                 {
-                    cout << "Simbolo Posible " << v << endl;
-                    lexemaYToken[idToken] = (make_pair(v, "Simbolo"));
+                    // cout << "Simbolo parentesis abre" << v << endl;
+                    lexemaYToken[make_pair("Parentesis abre", v)] = idToken;
+                    idx += v.size() ;
+                }
+                else if (v == ")")
+                {
+                    // cout << "Simbolo parentesis cierra" << v << endl;
+                    lexemaYToken[make_pair("Parentesis cierra", v)] = idToken;
+                    idx += v.size() ;
+                }
+                else if (v == "{")
+                {
+                    // cout << "Simbolo corchete abre" << v << endl;
+                    lexemaYToken[make_pair("Corchete abre", v)] = idToken;
+                    idx += v.size() ;
+                }
+                else if (v == "}")
+                {
+                    // cout << "Simbolo corchete abre" << v << endl;
+                    lexemaYToken[make_pair("Corchete cierra", v)] = idToken;
+                    idx += v.size() ;
                 }
             }
             else if (idxPosicion == v.size())
             {
-                cout << "Palabra posible " << v << endl;
-                lexemaYToken[idToken] = (make_pair(v, "Palabra reservada"));
+                // cout << "Variable " << v << endl;
+                lexemaYToken[make_pair("Variable", v)] = idToken;
+                idx += v.size() ;
             }
             else if (idxPosicion == v.size() + 1)
             { // Posible funcion
-                cout << "Funcion posible " << v << endl;
-                lexemaYToken[idToken] = (make_pair(v, "Funcion"));
+                // cout << "Funcion posible " << v << endl;
+                lexemaYToken[make_pair("Funcion posible", v)] = idToken;
+                idx += v.size() ;
             }
             else
             {
-                cout << "Palabra no posible en " << v << " indice: " << idxPosicion << endl;
+                cout << "Palabra no posible en " << v << " indice: " << idxPosicion + idx +1<< " indice no general: " << idxPosicion << endl;
+                return false;
+                idx += v.size() ;
             }
         }
+        idx += 1;
+        idToken++;
+    }
+    for (const auto &lYT : lexemaYToken)
+    {
+        lexemaYTokenOrdenados.emplace(lYT.second, lYT.first);
+    };
+    for (auto const &d : lexemaYTokenOrdenados)
+    {
+        cout << "Id Lexema: " << d.first << " valor: " << d.second.second << "  significado: " << d.second.first << endl;
+    }
+    idx = 0;
+    bool inicio_programa = false;
+    bool declaracion_variables = false;
+    bool inicializacion_variables = false;
+    bool llamada_funciones = false;
+    bool terminacion_programa = false;
+    for (auto const &i : vectoresPorStringDeCadaOracion)
+    {
+        if (i == "{") // inicia programa;
+        {
+            inicio_programa = true;
+        }
+        else if (inicio_programa && lexemaYTokenOrdenados[idx].second == "declare")
+        {
+            // Tenemos que dividr las cadenas hasta el ";"
+            declaracion_variables = true;
+        }
+        
+        else if(declaracion_variables && inicio_programa && lexemaYTokenOrdenados[idx].second=="assign"){
+            inicializacion_variables = true;
+        }
+        
+        else if(declaracion_variables && inicio_programa && inicializacion_variables &&lexemaYTokenOrdenados[idx].second=="callfunctions"){
+            llamada_funciones = true;
+        }else if(declaracion_variables && inicio_programa && inicializacion_variables &&lexemaYTokenOrdenados[idx].second=="}"){
+            terminacion_programa = true;
+        }
+
+        if (declaracion_variables && !inicializacion_variables)
+        {
+            cout << "Valor declare: " << i << endl;
+        }
+        else if (inicializacion_variables && !llamada_funciones)
+        {
+            cout << "Valor inicializacion: " << i << endl;
+        }else if(llamada_funciones && !terminacion_programa){
+            cout << "Funciones: " << i << endl;
+        }
+        idx++;
     }
 
     return true;

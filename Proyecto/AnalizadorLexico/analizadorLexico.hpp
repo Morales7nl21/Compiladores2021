@@ -9,7 +9,7 @@ private:
     bool resultadoAnalisis;
     string nombreArchivo;
     vector<string> palReservadas = {"repeat", "Init", "End", "Add",
-                                    "notTrue", "True", "False", "declare",
+                                    "notTrue", "True", "False", "declare", "assign","callfunctions",
                                     "AsNumber", "AsFloat", "AsChar", "Array", "len", "AsString",
                                     "()", "End", "showNumber", "showFloat", "showChar", "showString",
                                     "value", "Zero", "void", "number", "char", "string", ">>"};

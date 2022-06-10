@@ -1,0 +1,16 @@
+Init Zero >> ( AsChar c , AsString @ ) () void {
+    declare `
+    ComoE AsNumber ;
+    b AsNumber ;
+    assign
+    ComoE  value 10 ; 
+    b value 11 ;
+    a +- 7 ;
+    43 - 9 + 3 - ab * 8 - c ;
+    callfunctions
+    c:showChar(b) ;
+    ;    
+    ¨
+    ¿?
+    s:showstring(a) ;  
+} End

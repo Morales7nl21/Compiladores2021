@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
 #include <iostream>
+
+#include "proyecto.hpp"
+#include "LL1.hpp"
+
 using namespace std;
-#include "analizadorLexico.hpp"
-
-
-
 int main(int argc, char const *argv[])
 {
-    AnalizadorLexico *al = new AnalizadorLexico("archivoAnalizar.txt");
+    AnalizadorLexico *al = new AnalizadorLexico("archivoAnalizar.txt"); //Comenzamos a analizar lexicamente
     //AnalizadorLexico *al = new AnalizadorLexico("archivoAnalizarErroresLexicos.txt");
     
     string alEA = al->examinaArchivo();    

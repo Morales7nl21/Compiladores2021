@@ -2,20 +2,15 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+extern vector<string> palReservadas;
 
 class AnalizadorLexico
 {
 private:
     bool resultadoAnalisis;
     string nombreArchivo;
-    vector<string> palReservadas = {"repeat", "Init", "End", "Add",
-                                    "notTrue", "True", "False", "declare", "assign","callfunctions",
-                                    "AsNumber", "AsFloat", "AsChar", "Array", "len", "AsString",
-                                    "()", "End", "showNumber", "showFloat", "showChar", "showString",
-                                    "value", "Zero", "void", "number", "char", "string", ">>"};
 
 public:
-    
     AnalizadorLexico(string nombreArchivo) : nombreArchivo(nombreArchivo){};
 
     string examinaArchivo();     // Parte que quita n espacios por 1 espacio
@@ -52,5 +47,34 @@ public:
         }
         output.push_back(s.substr(prev_pos, pos - prev_pos)); // Last word
         return output;
+    };
+};
+class AnalizadorSintactico
+{
+private:
+    vector<int> idAAnalizar;
+
+public:
+    AnalizadorSintactico(vector<int> idAAnalizar) : idAAnalizar(idAAnalizar){};
+    void setcadAnalizar(vector<int> idAAnalizar)
+    {
+        this->idAAnalizar = idAAnalizar;
     }
+    int verificaDeclaracion();
+   
+    int verificaInicializacionLL1();
+    int verificafuncion();
+    string &corteIzquierda(string &str, string &c)
+    {
+        str.erase(0, str.find_first_of(c) + 1);
+        return str;
+    }
+    string &corteDerecha(string &str, string &c)
+    {
+        str.erase(str.find_last_of(c) );
+        return str;
+    }
+};
+class AnalizadorSemantico
+{
 };

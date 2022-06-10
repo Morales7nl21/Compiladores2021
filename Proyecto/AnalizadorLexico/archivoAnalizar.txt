@@ -5,7 +5,7 @@ Init Zero >> ( AsChar c , AsString s ) () void {
     assign
     comoa value 10 ;
     b value 11 ;
-    b value ( 43 - 9 ) + 3 - ab * 8 - c ;
+    b 3 ( 43 - 9 ) + 3 - ab * 8 - c ;
     a + 7 ;
     callfunctions
     s:showstring(a) ; 

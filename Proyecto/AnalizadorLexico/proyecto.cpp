@@ -49,7 +49,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 
         if (esPalReservada(v))
         {
-            cout << "Palabra reservada  " << v << endl;
+            //cout << "Palabra reservada  " << v << endl;
             lexemaYToken[v] = idToken;
             idx += v.size();
         }
@@ -151,11 +151,12 @@ bool AnalizadorLexico::analizaArchivo(string cad)
     {
         lexemaYTokenOrdenados.emplace(lYT.second, lYT.first);
     };
+    /*
     for (auto const &d : lexemaYTokenOrdenados)
     {
         cout << "Id Lexema: " << d.first << " valor: " << d.second << endl;
     }
-
+    */
     AnalizadorSintactico *aSi;
     AnalizadorSemantico *aSe;
     idx = 0;

@@ -77,4 +77,12 @@ public:
 };
 class AnalizadorSemantico
 {
+    private:
+    vector<int> idAAnalizar;
+    map<string,string> tiposDatoYVariable;
+    map<string,string> datoAsignadoValorDeclarado;
+    public:
+    AnalizadorSemantico(vector<int> idAAnalizar): idAAnalizar(idAAnalizar){};
+    bool analizaSemanticamenteDeclaracion();
+    bool analizaSemanticamenteAsignacion();
 };

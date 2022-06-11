@@ -2,6 +2,7 @@ Init Zero >> ( AsChar c , AsString s ) () void {
     declare
     a AsNumber ;
     b AsNumber ;
+    s AsFunc ;
     c hola ;
     assign
     comoa value 10 ;

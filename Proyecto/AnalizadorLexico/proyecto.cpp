@@ -6,7 +6,7 @@ using namespace std;
 map<string, int> lexemaYToken{};
 map<int, string> lexemaYTokenOrdenados{};
 vector<string> palReservadas = {"repeat", "Init", "End", "Add",
-                                "notTrue", "True", "False", "declare", "assign", "callfunctions",
+                                "notTrue", "True", "False", "declare", "assign", "callfunctions", "endfunctions",
                                 "AsNumber", "AsFloat", "AsChar", "Array", "len", "AsString",
                                 "()", "End", "showNumber", "showFloat", "showChar", "showString",
                                 "value", "Zero", "void", "number", "char", "string", ">>"};
@@ -49,7 +49,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 
         if (esPalReservada(v))
         {
-            //cout << "Palabra reservada  " << v << endl;
+            // cout << "Palabra reservada  " << v << endl;
             lexemaYToken[v] = idToken;
             idx += v.size();
         }
@@ -64,75 +64,17 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             }
             else if (regex_match(v, regexD))
             {
-                if (v == "+")
-                {
-                    // cout << "Simbolo suma " << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
 
-                else if (v == "-")
-                {
-                    // cout << "Simbolo resta " << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-
-                else if (v == "*")
-                {
-                    // cout << "Simbolo multiplicacion " << v << endl;
-
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-
-                else if (v == "/")
-                {
-                    // cout << "Simbolo divison " << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-
-                else if (v == "(")
-                {
-                    // cout << "Simbolo parentesis abre" << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-                else if (v == ")")
-                {
-                    // cout << "Simbolo parentesis cierra" << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-                else if (v == "{")
-                {
-                    // cout << "Simbolo corchete abre" << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-                else if (v == "}")
-                {
-                    // cout << "Simbolo corchete abre" << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
-                else if (v == ";")
-                {
-                    // cout << "Simbolo corchete abre" << v << endl;
-                    lexemaYToken[v] = idToken;
-                    idx += v.size();
-                }
+                lexemaYToken[v] = idToken;
+                idx += v.size();
             }
             else if (idxPosicion == v.size())
             {
-                // cout << "Variable " << v << endl;
                 lexemaYToken[v] = idToken;
                 idx += v.size();
             }
             else if (idxPosicion == v.size() + 1)
             { // Posible funcion
-                // cout << "Funcion posible " << v << endl;
                 lexemaYToken[v] = idToken;
                 idx += v.size();
             }
@@ -163,7 +105,8 @@ bool AnalizadorLexico::analizaArchivo(string cad)
     bool inicio_programa = false;
     bool declaracion_variables = false;
     bool inicializacion_variablesLL1 = false;
-    
+    bool verificaTerminacion = false;
+    bool verificoFunciones = false;
     bool llamada_funciones = false;
     bool terminacion_programa = false;
     vector<int> vectorAAnalizarSintacticamente{};
@@ -182,12 +125,21 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         // Falta contemplar la asignacion sin operadores
         else if (declaracion_variables && inicio_programa && lexemaYTokenOrdenados[idx] == "assign")
         {
-            inicializacion_variablesLL1 = true;
+            
+            if(vectorAAnalizarSintacticamente.size() > 1){
+                cout << "[sintactico] falto cerrar con ';' en la declaracion" << endl;
+                break;
+            }
+            
         }
 
         else if (declaracion_variables && inicio_programa && inicializacion_variablesLL1 && lexemaYTokenOrdenados[idx] == "callfunctions")
         {
             llamada_funciones = true;
+        }
+        if (declaracion_variables && inicio_programa && inicializacion_variablesLL1 && lexemaYTokenOrdenados[idx] == "endfunctions")
+        {
+            verificoFunciones = true;
         }
         else if (declaracion_variables && inicio_programa && inicializacion_variablesLL1 && lexemaYTokenOrdenados[idx] == "}")
         {
@@ -197,21 +149,35 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         if (declaracion_variables && !inicializacion_variablesLL1)
         {
 
-            cout << "ID: " << lexemaYToken[i];
-            cout << "  Valor declare: " << i << endl;
+            // cout << "ID: " << lexemaYToken[i];
+            // cout << "  Valor declare: " << i << endl;
             if (i != "declare")
                 vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
             if (i == ";")
             {
                 aSi = new AnalizadorSintactico(vectorAAnalizarSintacticamente);
-                if (aSi->verificaDeclaracion() == 0)
+                int nparams = aSi->verificaDeclaracion();
+               
+                if (nparams < 3 || nparams > 3)
                 {
-                    string declarion = "";
-                    for (auto const &vAS : vectorAAnalizarSintacticamente)
+
+                    if (nparams < 3)
                     {
-                        declarion.push_back(vAS);
+                        cout << "[sintactico] Se esperaban mas parametros para la declaracion de variables en: " << endl;
+                        for (auto const &vAS : vectorAAnalizarSintacticamente)
+                        {
+                            cout << lexemaYTokenOrdenados[vAS] << " ";
+                        }
                     }
-                    cout << "[sintactico] Se esperaban mas parametros para la declaracion de variables en: " << declarion << endl;
+                    else if (nparams > 3)
+                    {
+                        cout << "[sintactico] Se esperaban ';', demaciados parametros al declarar: " << endl;
+                        for (auto const &vAS : vectorAAnalizarSintacticamente)
+                        {
+                            cout << lexemaYTokenOrdenados[vAS] << " ";
+                        }
+                    }
+                    vectorAAnalizarSintacticamente.clear();
                     break;
                 }
                 vectorAAnalizarSintacticamente.clear();
@@ -220,7 +186,6 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         else if (inicializacion_variablesLL1 && !llamada_funciones)
         {
 
-            cout << "Valor inicializacion: " << i << endl;
             if (i != "assign")
                 vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
             if (i == ";")
@@ -229,11 +194,12 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 if (aSi->verificaInicializacionLL1() == 0)
                 {
                     string inicializacion = "";
+                    cout << "[sintactico] La inicializacion no es correcta: " << inicializacion << endl;
                     for (auto const &vAS : vectorAAnalizarSintacticamente)
                     {
-                        inicializacion.push_back(vAS);
+                        cout << lexemaYTokenOrdenados[vAS] << " ";
                     }
-                    cout << "[sintactico] La inicializacion no es correcta: " << inicializacion << endl;
+
                     break;
                 }
                 vectorAAnalizarSintacticamente.clear();
@@ -242,18 +208,50 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         else if (llamada_funciones && !terminacion_programa)
         {
 
-            cout << "Funciones: " << i << endl;
-            if (i != "callfunctions")
-                vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
-            if (i == ";")
+            if (i == "endfunctions")
             {
-                aSi = new AnalizadorSintactico(vectorAAnalizarSintacticamente);
-                /*
-                if (aSi->verificafuncion())
+                llamada_funciones = false;
+                verificaTerminacion = true;
+            }
+
+            else
+            {
+                if (!verificaTerminacion)
                 {
+                    cout << "Funciones: " << i << endl;
+                    if (i != "callfunctions")
+                        vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
+                    if (i == ";")
+                    {
+
+                        vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
+                        aSi = new AnalizadorSintactico(vectorAAnalizarSintacticamente);
+                        if (aSi->verificafuncion() == 0)
+                        {
+
+                            cout << "[sintactico] La declaracion de la funcion no es correcta en: " << endl;
+                            for (auto const &vAS : vectorAAnalizarSintacticamente)
+                            {
+                                cout << lexemaYTokenOrdenados[vAS] << " ";
+                            }
+                        }
+                        vectorAAnalizarSintacticamente.clear();
+                    }
                 }
-                */
-                vectorAAnalizarSintacticamente.clear();
+            }
+        }
+        if (verificoFunciones && verificaTerminacion)
+        {
+
+            if (vectorAAnalizarSintacticamente.size() > 2)
+            {
+                cout << "[sintactico] La declaracion de la funcion no es correcta falto un ';' en: " << endl;
+                for (auto const &vAS : vectorAAnalizarSintacticamente)
+                {
+                    cout << lexemaYTokenOrdenados[vAS] << " ";
+                }
+
+                break;
             }
         }
         idx++;
@@ -365,7 +363,11 @@ int AnalizadorSintactico::verificaDeclaracion()
     {
         cont++;
     }
-    return cont;
+    //cout << "CONT FUNC: " << cont << endl;
+    if (cont >= 3)
+        return cont;
+    else
+        return 0;
 }
 int AnalizadorSintactico::verificafuncion()
 {
@@ -374,6 +376,12 @@ int AnalizadorSintactico::verificafuncion()
     corteIzquierda(func, corte);
     corte = "(";
     corteDerecha(func, corte);
+    string fin = lexemaYTokenOrdenados[idAAnalizar[idAAnalizar.size() - 1]];
+    if (fin != ";")
+    {
+        cout << "[sintactico] Falto ';'" << endl;
+        return 0;
+    }
     for (auto const &f : declaracionFuncion)
     {
         if (func == f)
@@ -392,11 +400,31 @@ int AnalizadorSintactico::verificaInicializacionLL1()
 
     vector<string> cadAAnalizarLL1{};
     LL1 *l1 = new LL1();
+    bool palReservada = false;
     if (idAAnalizar.size() == 4 && lexemaYTokenOrdenados[idAAnalizar[1]] == "value")
     {
-        cout << "4: " << endl
-             << idAAnalizar[0] << " " << idAAnalizar[1] << " " << idAAnalizar[2] << endl;
+
+        for (auto const &pR : palReservadas)
+        {
+            if (lexemaYTokenOrdenados[idAAnalizar[0]] == pR)
+            {
+                cout << "[sintactico] Se esperaba un identificador que no es palabra reservada en: " << pR << endl;
+                return 0;
+            }
+            else if (lexemaYTokenOrdenados[idAAnalizar[1]] == pR)
+            {
+                palReservada = true;
+            }
+            if (lexemaYTokenOrdenados[idAAnalizar[2]] == pR)
+            {
+                cout << "[sintactico] Se esperaba un identificador que no es palabra reservada en: " << pR << endl;
+                return 0;
+            }
+        }
+        if (!palReservada)
+            cout << "[sintactico] Se esperaba una palabra reservada  en: " << lexemaYTokenOrdenados[idAAnalizar[1]] << endl;
     }
+
     else
     {
         if (lexemaYTokenOrdenados[idAAnalizar[1]] == "value")

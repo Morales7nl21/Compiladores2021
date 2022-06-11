@@ -1,6 +1,6 @@
 Init Zero >> ( AsChar c , AsString s ) () void {
     declare
-    comoa AsNumber ;
+    Como AsNumber ;
     b AsNumber ;
     assign
     comoa value 10 ;
@@ -8,6 +8,6 @@ Init Zero >> ( AsChar c , AsString s ) () void {
     b value ( 43 - 9 ) + 3 - ab * 8 - c ;
     a + 7 ;
     callfunctions
-    s:showstring(a) ;    
+    s:showstring(a) ;
     endfunctions 
 } End

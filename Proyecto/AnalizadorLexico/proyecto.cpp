@@ -4,7 +4,8 @@
 #include "LL1.hpp"
 using namespace std;
 map<string, int> lexemaYToken{};
-
+map<string, string> tiposDatoYVariable;
+map<string, string> datoAsignadoValorDeclarado;
 map<int, string> lexemaYTokenOrdenados{};
 vector<string> palReservadas = {"repeat", "Init", "End", "Add",
                                 "notTrue", "True", "False", "declare", "assign", "callfunctions", "endfunctions",
@@ -110,6 +111,8 @@ bool AnalizadorLexico::analizaArchivo(string cad)
     bool verificoFunciones = false;
     bool llamada_funciones = false;
     bool terminacion_programa = false;
+    vector<int> auxvectorAAnalizarSintacticamente{};
+
     vector<int> vectorAAnalizarSintacticamente{};
     for (auto const &i : vectoresPorStringDeCadaOracion)
     {
@@ -126,8 +129,9 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         // Falta contemplar la asignacion sin operadores
         else if (declaracion_variables && inicio_programa && lexemaYTokenOrdenados[idx] == "assign")
         {
-            
-            if(vectorAAnalizarSintacticamente.size() > 1){
+
+            if (vectorAAnalizarSintacticamente.size() > 1)
+            {
                 cout << "[sintactico] falto cerrar con ';' en la declaracion" << endl;
                 break;
             }
@@ -153,13 +157,13 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 
             // cout << "ID: " << lexemaYToken[i];
             // cout << "  Valor declare: " << i << endl;
-            if (i != "declare" && i!= "assign")
+            if (i != "declare" && i != "assign")
                 vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
             if (i == ";")
             {
                 aSi = new AnalizadorSintactico(vectorAAnalizarSintacticamente);
                 int nparams = aSi->verificaDeclaracion();
-                //cout << "NPARAMS:" << nparams << endl;
+                // cout << "NPARAMS:" << nparams << endl;
                 if (nparams < 3 || nparams > 3)
                 {
 
@@ -181,9 +185,12 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                     }
                     vectorAAnalizarSintacticamente.clear();
                     break;
-                }else{                    
+                }
+                else
+                {
                     asem = new AnalizadorSemantico(vectorAAnalizarSintacticamente);
-                    if(!(asem->analizaSemanticamenteDeclaracion())){
+                    if (!(asem->analizaSemanticamenteDeclaracion()))
+                    {
                         break;
                     }
                 }
@@ -209,7 +216,12 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 
                     break;
                 }
-                vectorAAnalizarSintacticamente.clear();
+                else
+                {
+                    aSe = new AnalizadorSemantico(vectorAAnalizarSintacticamente);
+                    aSe->analizaSemanticamenteAsignacion();
+                    vectorAAnalizarSintacticamente.clear();
+                }
             }
         }
         else if (llamada_funciones && !terminacion_programa)
@@ -226,7 +238,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 if (!verificaTerminacion)
                 {
                     cout << "Funciones: " << i << endl;
-                    if (i != "callfunctions" && i!=";")
+                    if (i != "callfunctions" && i != ";")
                         vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
                     if (i == ";")
                     {
@@ -263,6 +275,12 @@ bool AnalizadorLexico::analizaArchivo(string cad)
         }
         idx++;
     }
+
+    bool assignboolsemantico = false;
+    bool funcbool = false;
+    vectorAAnalizarSintacticamente.clear();
+
+    // Volviendo a reccorer para analizar semanticamente
 
     return true;
 }
@@ -370,7 +388,7 @@ int AnalizadorSintactico::verificaDeclaracion()
     {
         cont++;
     }
-    //cout << "CONT FUNC: " << cont << endl;
+    // cout << "CONT FUNC: " << cont << endl;
     if (cont >= 3)
         return cont;
     else
@@ -478,7 +496,8 @@ int AnalizadorSintactico::verificaInicializacionLL1()
 
     return 1;
 }
-bool AnalizadorSemantico::analizaSemanticamenteDeclaracion(){
+bool AnalizadorSemantico::analizaSemanticamenteDeclaracion()
+{
     regex regexA("[A-Z]+");
     regex regexB("[a-z]+");
     regex regexC("[0-9]+");
@@ -489,8 +508,8 @@ bool AnalizadorSemantico::analizaSemanticamenteDeclaracion(){
     bool boolID1palReservada = false;
     bool boolID2palReservada = false;
     string palReservadaID1 = "";
-  
-    //cout << "ANALIZADOR SEMANTICO PARA: " << endl;
+
+    // cout << "ANALIZADOR SEMANTICO PARA: " << endl;
     /*
     for(auto const &id:idAAnalizar){
         cout << lexemaYTokenOrdenados[id] << " ";
@@ -498,36 +517,244 @@ bool AnalizadorSemantico::analizaSemanticamenteDeclaracion(){
     */
     for (auto const &pR : palReservadas)
     {
-        if(lexemaYTokenOrdenados[idAAnalizar[0]] == pR){
+        if (lexemaYTokenOrdenados[idAAnalizar[0]] == pR)
+        {
             palReservadaID1 = pR;
             boolID1palReservada = true;
         }
-        if(lexemaYTokenOrdenados[idAAnalizar[1]] == pR){
+        if (lexemaYTokenOrdenados[idAAnalizar[1]] == pR)
+        {
             boolID2palReservada = true;
-            
         }
     }
-    if(boolID1palReservada){
+    if (boolID1palReservada)
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no una palabra reservada en: " << palReservadaID1;
     }
-    if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexC)){
+    if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexC))
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no un numero: " << lexemaYTokenOrdenados[idAAnalizar[0]];
-    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexD)){
+    }
+    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexD))
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no un signo: " << lexemaYTokenOrdenados[idAAnalizar[0]];
-    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexF)){
+    }
+    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexF))
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no un guion bajo: " << lexemaYTokenOrdenados[idAAnalizar[0]];
-    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexP)){
+    }
+    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexP))
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no un corchete o parentesis: " << lexemaYTokenOrdenados[idAAnalizar[0]];
-    }else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexEspacio)){
+    }
+    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexEspacio))
+    {
         cout << "[Semantico] Se esperaba una definicion de variable no espacio: " << lexemaYTokenOrdenados[idAAnalizar[0]];
-    }else{
-        if(!boolID2palReservada){
+    }
+    else
+    {
+        if (!boolID2palReservada)
+        {
             cout << "[Semantico] Se esperaba una variable reservada no un: " << lexemaYTokenOrdenados[idAAnalizar[1]];
-        }else{
-            tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]], lexemaYTokenOrdenados[idAAnalizar[1]]];
+        }
+        else
+        {
+            // cout << "Guardando key en tipodato: " << lexemaYTokenOrdenados[idAAnalizar[0]] << " valor: " << lexemaYTokenOrdenados[idAAnalizar[1]] << endl;
+            tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] = lexemaYTokenOrdenados[idAAnalizar[1]];
             return true;
         }
     }
     return false;
+}
+bool AnalizadorSemantico::analizaSemanticamenteAsignacion()
+{
+    regex regexString("[A-Z | a-z]+"); //
+    regex regexChar("[A-Z | a-z]");
+    regex regexNumber("[0-9]+");
+    regex regexBrackets("[(|)|{|}]");
 
+    regex regexOperations("[+|*|/|-]");
+
+    bool esAsignacion = false;
+
+    for (auto const &id : idAAnalizar)
+    {
+        cout << lexemaYTokenOrdenados[id] << " ";
+    }
+    cout << endl;
+
+    if ("value" == lexemaYTokenOrdenados[idAAnalizar[1]])
+        esAsignacion = true;
+
+    if (esAsignacion && idAAnalizar.size() == 4)
+    {
+
+        if (tiposDatoYVariable.count(lexemaYTokenOrdenados[idAAnalizar[0]]))
+        { // Si esta declarado
+            if (tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] == "AsNumber")
+            {
+                if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexNumber))
+                {
+                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    return true;
+                }
+            }
+            else if (tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] == "AsChar")
+            {
+                if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexChar))
+                {
+                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    return true;
+                }
+            }
+            else if (tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] == "AsString")
+            {
+                if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexString))
+                {
+                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    return true;
+                }
+            }
+            cout << "[Semantico] Valor incompatible: " << lexemaYTokenOrdenados[idAAnalizar[2]] << " se esperaba: " << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << endl;
+            return false;
+        }
+        else
+        {
+            cout << "[Semantico] Variable no declarada: " << lexemaYTokenOrdenados[idAAnalizar[0]] << endl;
+        }
+    }
+    else
+    {
+
+        // Checamos de nuevo si existe una asignacion
+        if ("value" == lexemaYTokenOrdenados[idAAnalizar[1]])
+        {
+
+            if (tiposDatoYVariable.count(lexemaYTokenOrdenados[idAAnalizar[0]]))
+            { // existe si está declarada
+                if (tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] == "AsNumber")
+                { // checamos que todos sean numeros
+                    int cont_omision = 0;
+                    for (auto const &i : idAAnalizar)
+                    {
+                        if (cont_omision >= 2)
+                        {
+                            if (!regex_match(lexemaYTokenOrdenados[i], regexBrackets) && !regex_match(lexemaYTokenOrdenados[i], regexNumber) && !regex_match(lexemaYTokenOrdenados[i], regexOperations) && lexemaYTokenOrdenados[i] != ";")
+                            {
+
+                                if (tiposDatoYVariable.count(lexemaYTokenOrdenados[i]))
+                                {
+                                    if (tiposDatoYVariable[lexemaYTokenOrdenados[i]] != "AsNumber")
+                                        cout << "[Semantico] Se esperaba una variable de tipo 'AsNumber', pero se encontro: " << lexemaYTokenOrdenados[i] << " de tipo: " << tiposDatoYVariable[lexemaYTokenOrdenados[i]] << endl;
+                                }
+                                else
+                                {
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsNumber', pero no se encontro el tipo de dato de la variable: " << lexemaYTokenOrdenados[i] << endl;
+                                }
+                            }
+                        }
+                        cont_omision++;
+                    }
+                }
+            }
+        }
+        else
+        { // Checamos icompatibilidad de datos con base al primer dato
+            string tipoAUsar = "";
+            int final_operacion = 0;
+            while (tipoAUsar == "")
+            {
+                if (final_operacion < idAAnalizar.size() - 1)
+                {
+                    if (regex_match(lexemaYTokenOrdenados[idAAnalizar[final_operacion]], regexNumber))
+                        tipoAUsar = "AsNumber";
+                    else if (tiposDatoYVariable.count(lexemaYTokenOrdenados[idAAnalizar[final_operacion]]))
+                        tipoAUsar = tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[final_operacion]]];
+                    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[final_operacion]], regexChar))
+                        tipoAUsar = "AsChar";
+                    else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[final_operacion]], regexString))
+                        tipoAUsar = "AsString";
+                    final_operacion++;
+                }
+                else
+                    break;
+            }
+
+            cout << "tipoAusar " << tipoAUsar << endl;
+            int cont_omision = 0;
+
+            for (auto const &i : idAAnalizar)
+            {
+                if (cont_omision > 0)
+                {
+                    if (tipoAUsar == "AsNumber")
+                    {
+                        if (!regex_match(lexemaYTokenOrdenados[i], regexBrackets) && !regex_match(lexemaYTokenOrdenados[i], regexNumber) && !regex_match(lexemaYTokenOrdenados[i], regexOperations) && lexemaYTokenOrdenados[i] != ";")
+                        {
+                            if (tiposDatoYVariable.count(lexemaYTokenOrdenados[i]))
+                            {
+                                if (tiposDatoYVariable[lexemaYTokenOrdenados[i]] != "AsNumber")
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsNumber', pero se encontro: " << lexemaYTokenOrdenados[i] << " de tipo: " << tiposDatoYVariable[lexemaYTokenOrdenados[i]] << endl;
+                            }
+                            else
+                            {
+                                cout << "[Semantico] Se esperaba una variable de tipo 'AsNumber', pero no se encontro el tipo de dato de la variable: " << lexemaYTokenOrdenados[i] << endl;
+                            }
+                        }
+                    }
+                    else if (tipoAUsar == "AsChar")
+                    {
+                        if (!regex_match(lexemaYTokenOrdenados[i], regexBrackets) && (lexemaYTokenOrdenados[i] != "+") && lexemaYTokenOrdenados[i] != ";")
+                        {
+                            if (lexemaYTokenOrdenados[i] == "*" || lexemaYTokenOrdenados[i] == "/" || lexemaYTokenOrdenados[i] == "-")
+                            {
+                                cout << "[Semantico] Solo se puede concatenar con simbolo '+', se encontro " << lexemaYTokenOrdenados[i] << endl;
+                            }
+                            else if (regex_match(lexemaYTokenOrdenados[i], regexNumber))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsString', pero se encontro 'AsNumber' en: " << lexemaYTokenOrdenados[i] << endl;                                
+                            else if (tiposDatoYVariable.count(lexemaYTokenOrdenados[i]))
+                            {
+                                if (tiposDatoYVariable[lexemaYTokenOrdenados[i]] != "AsChar")
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsChar', pero se encontro: " << lexemaYTokenOrdenados[i] << " de tipo: " << tiposDatoYVariable[lexemaYTokenOrdenados[i]] << endl;
+                            }
+                            else
+                            {                                
+                                if (regex_match(tiposDatoYVariable[lexemaYTokenOrdenados[i]], regexString))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsChar', pero no se encontro el tipo 'AsString' en: " << lexemaYTokenOrdenados[i] << endl;
+                                if (!regex_match(tiposDatoYVariable[lexemaYTokenOrdenados[i]], regexChar))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsChar', pero no se encontro el tipo de dato de la variable: " << lexemaYTokenOrdenados[i] << endl;
+                            }
+                        }
+                    }
+                    else if (tipoAUsar == "AsString")
+                    {
+                        if (!regex_match(lexemaYTokenOrdenados[i], regexBrackets) && (lexemaYTokenOrdenados[i] != "+") && lexemaYTokenOrdenados[i] != ";")
+                        {
+                            if (lexemaYTokenOrdenados[i] == "*" || lexemaYTokenOrdenados[i] == "/" || lexemaYTokenOrdenados[i] == "-")
+                            {
+                                cout << "[Semantico] Solo se puede concatenar con simbolo '+', se encontro " << lexemaYTokenOrdenados[i] << endl;
+                            }
+                            else if (regex_match(lexemaYTokenOrdenados[i], regexNumber))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsString', pero se encontro 'AsNumber' en: " << lexemaYTokenOrdenados[i] << endl;                                
+                                
+                            else if (tiposDatoYVariable.count(lexemaYTokenOrdenados[i]))
+                            {
+                                if (tiposDatoYVariable[lexemaYTokenOrdenados[i]] != "AsString")
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsString', pero se encontro: " << lexemaYTokenOrdenados[i] << " de tipo: " << tiposDatoYVariable[lexemaYTokenOrdenados[i]] << endl;
+                            }
+                            else
+                            {
+                                if (regex_match(tiposDatoYVariable[lexemaYTokenOrdenados[i]], regexChar))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsString', pero se encontro 'AsChar' en: " << lexemaYTokenOrdenados[i] << endl; 
+                                if (!regex_match(tiposDatoYVariable[lexemaYTokenOrdenados[i]], regexString))
+                                    cout << "[Semantico] Se esperaba una variable de tipo 'AsString', pero no se encontro el tipo de dato de la variable: " << lexemaYTokenOrdenados[i] << endl;                                
+                            }
+                        }
+                    }
+                }
+
+                cont_omision++;
+            }
+        }
+    }
 }

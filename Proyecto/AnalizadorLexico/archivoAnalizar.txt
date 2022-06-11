@@ -1,6 +1,6 @@
 Init Zero >> ( AsChar c , AsString s ) () void {
     declare
-    Como AsNumber ;
+    comoa AsNumber ;
     b AsNumber ;
     assign
     comoa value 10 ;

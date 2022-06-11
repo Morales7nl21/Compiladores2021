@@ -10,9 +10,9 @@ vector<string> palReservadas = {"repeat", "Init", "End", "Add",
                                 "notTrue", "True", "False", "declare", "assign", "callfunctions", "endfunctions",
                                 "AsNumber", "AsFloat", "AsChar", "Array", "len", "AsString",
                                 "()", "End", "showNumber", "showFloat", "showChar", "showString",
-                                "value", "Zero", "void", "number", "char", "string", ">>"};
+                                "value", "Zero", "void", "number", "char", "string", ">>", "AsFunc"};
 vector<string> tipoDeclaracion = {
-    "AsNumber", "AsFloat", "AsChar", "Array", "AsString"};
+    "AsNumber", "AsFloat", "AsChar", "Array", "AsString", "AsFunc"};
 vector<string> declaracionFuncion = {
     "showstring", "pow", "showint", "showchar"};
 
@@ -81,7 +81,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
             }
             else
             {
-                cout << "Palabra no posible en " << v << " indice: " << idxPosicion + idx + 1 << " indice no general: " << idxPosicion << endl;
+                cout << "[lexico] Palabra no posible en " << v << " indice: " << idxPosicion + idx + 1 << " indice no general: " << idxPosicion << endl;
                 return false;
                 idx += v.size();
             }
@@ -131,6 +131,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 cout << "[sintactico] falto cerrar con ';' en la declaracion" << endl;
                 break;
             }
+            vectorAAnalizarSintacticamente.clear();
             inicializacion_variablesLL1 = true;
         }
 
@@ -225,7 +226,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 if (!verificaTerminacion)
                 {
                     cout << "Funciones: " << i << endl;
-                    if (i != "callfunctions")
+                    if (i != "callfunctions" && i!=";")
                         vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
                     if (i == ";")
                     {
@@ -379,15 +380,10 @@ int AnalizadorSintactico::verificafuncion()
 {
     string corte = ":";
     string func = lexemaYTokenOrdenados[idAAnalizar[0]];
+
     corteIzquierda(func, corte);
     corte = "(";
     corteDerecha(func, corte);
-    string fin = lexemaYTokenOrdenados[idAAnalizar[idAAnalizar.size() - 1]];
-    if (fin != ";")
-    {
-        cout << "[sintactico] Falto ';'" << endl;
-        return 0;
-    }
     for (auto const &f : declaracionFuncion)
     {
         if (func == f)
@@ -495,9 +491,11 @@ bool AnalizadorSemantico::analizaSemanticamenteDeclaracion(){
     string palReservadaID1 = "";
   
     //cout << "ANALIZADOR SEMANTICO PARA: " << endl;
+    /*
     for(auto const &id:idAAnalizar){
         cout << lexemaYTokenOrdenados[id] << " ";
     }
+    */
     for (auto const &pR : palReservadas)
     {
         if(lexemaYTokenOrdenados[idAAnalizar[0]] == pR){

@@ -4,6 +4,7 @@
 #include "LL1.hpp"
 using namespace std;
 map<string, int> lexemaYToken{};
+
 map<int, string> lexemaYTokenOrdenados{};
 vector<string> palReservadas = {"repeat", "Init", "End", "Add",
                                 "notTrue", "True", "False", "declare", "assign", "callfunctions", "endfunctions",
@@ -33,7 +34,7 @@ string AnalizadorLexico::examinaArchivo()
 }
 bool AnalizadorLexico::analizaArchivo(string cad)
 {
-
+    AnalizadorSemantico *asem;
     regex regexA("[A-Z]+");
     regex regexB("[a-z]+");
     regex regexC("[0-9]+");
@@ -130,7 +131,7 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                 cout << "[sintactico] falto cerrar con ';' en la declaracion" << endl;
                 break;
             }
-            
+            inicializacion_variablesLL1 = true;
         }
 
         else if (declaracion_variables && inicio_programa && inicializacion_variablesLL1 && lexemaYTokenOrdenados[idx] == "callfunctions")
@@ -151,13 +152,13 @@ bool AnalizadorLexico::analizaArchivo(string cad)
 
             // cout << "ID: " << lexemaYToken[i];
             // cout << "  Valor declare: " << i << endl;
-            if (i != "declare")
+            if (i != "declare" && i!= "assign")
                 vectorAAnalizarSintacticamente.push_back(lexemaYToken[i]);
             if (i == ";")
             {
                 aSi = new AnalizadorSintactico(vectorAAnalizarSintacticamente);
                 int nparams = aSi->verificaDeclaracion();
-               
+                //cout << "NPARAMS:" << nparams << endl;
                 if (nparams < 3 || nparams > 3)
                 {
 
@@ -179,6 +180,11 @@ bool AnalizadorLexico::analizaArchivo(string cad)
                     }
                     vectorAAnalizarSintacticamente.clear();
                     break;
+                }else{                    
+                    asem = new AnalizadorSemantico(vectorAAnalizarSintacticamente);
+                    if(!(asem->analizaSemanticamenteDeclaracion())){
+                        break;
+                    }
                 }
                 vectorAAnalizarSintacticamente.clear();
             }
@@ -476,6 +482,54 @@ int AnalizadorSintactico::verificaInicializacionLL1()
 
     return 1;
 }
-int verificaInicializacion()
-{
+bool AnalizadorSemantico::analizaSemanticamenteDeclaracion(){
+    regex regexA("[A-Z]+");
+    regex regexB("[a-z]+");
+    regex regexC("[0-9]+");
+    regex regexD("[-|+|*|/|(|)|;]");
+    regex regexF("[_]");
+    regex regexP("[(|)|{|}]");
+    regex regexEspacio("[ ]+");
+    bool boolID1palReservada = false;
+    bool boolID2palReservada = false;
+    string palReservadaID1 = "";
+  
+    //cout << "ANALIZADOR SEMANTICO PARA: " << endl;
+    for(auto const &id:idAAnalizar){
+        cout << lexemaYTokenOrdenados[id] << " ";
+    }
+    for (auto const &pR : palReservadas)
+    {
+        if(lexemaYTokenOrdenados[idAAnalizar[0]] == pR){
+            palReservadaID1 = pR;
+            boolID1palReservada = true;
+        }
+        if(lexemaYTokenOrdenados[idAAnalizar[1]] == pR){
+            boolID2palReservada = true;
+            
+        }
+    }
+    if(boolID1palReservada){
+        cout << "[Semantico] Se esperaba una definicion de variable no una palabra reservada en: " << palReservadaID1;
+    }
+    if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexC)){
+        cout << "[Semantico] Se esperaba una definicion de variable no un numero: " << lexemaYTokenOrdenados[idAAnalizar[0]];
+    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexD)){
+        cout << "[Semantico] Se esperaba una definicion de variable no un signo: " << lexemaYTokenOrdenados[idAAnalizar[0]];
+    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexF)){
+        cout << "[Semantico] Se esperaba una definicion de variable no un guion bajo: " << lexemaYTokenOrdenados[idAAnalizar[0]];
+    }else if(regex_match(lexemaYTokenOrdenados[idAAnalizar[0]],regexP)){
+        cout << "[Semantico] Se esperaba una definicion de variable no un corchete o parentesis: " << lexemaYTokenOrdenados[idAAnalizar[0]];
+    }else if (regex_match(lexemaYTokenOrdenados[idAAnalizar[0]], regexEspacio)){
+        cout << "[Semantico] Se esperaba una definicion de variable no espacio: " << lexemaYTokenOrdenados[idAAnalizar[0]];
+    }else{
+        if(!boolID2palReservada){
+            cout << "[Semantico] Se esperaba una variable reservada no un: " << lexemaYTokenOrdenados[idAAnalizar[1]];
+        }else{
+            tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]], lexemaYTokenOrdenados[idAAnalizar[1]]];
+            return true;
+        }
+    }
+    return false;
+
 }

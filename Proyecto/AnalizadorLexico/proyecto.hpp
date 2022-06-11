@@ -3,7 +3,8 @@
 
 using namespace std;
 extern vector<string> palReservadas;
-
+extern map<string,string> tiposDatoYVariable;
+extern map<string,string> datoAsignadoValorDeclarado;
 class AnalizadorLexico
 {
 private:
@@ -78,9 +79,7 @@ public:
 class AnalizadorSemantico
 {
     private:
-    vector<int> idAAnalizar;
-    map<string,string> tiposDatoYVariable;
-    map<string,string> datoAsignadoValorDeclarado;
+    vector<int> idAAnalizar;   
     public:
     AnalizadorSemantico(vector<int> idAAnalizar): idAAnalizar(idAAnalizar){};
     bool analizaSemanticamenteDeclaracion();

@@ -1,0 +1,14 @@
+Init Zero >> ( AsChar c , AsString s ) () void {
+    declare
+    a AsNumber ;
+    b AsNumber ;
+    c hola ;
+    assign
+    comoa value 10 ;
+    b value 11 ;
+    b value ( AsNumber - 9 ) + 3 - ab * 8 - c ;
+    a + 7 ;
+    callfunctions
+    s:showstring(a) ;
+    endfunctions 
+} End

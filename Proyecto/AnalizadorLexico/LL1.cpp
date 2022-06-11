@@ -584,13 +584,14 @@ void LL1::generacionTabla()
 
 bool LL1::ingresaCadena(vector<string> cadena)
 {
+    /*
     cout << "Cadena:" << endl;
     for (auto const &c : cadena)
     {
         cout << c << " ";
     }
     cout << endl;
-
+    */
     stack<string> pila{};
     pila.push("$");
     pila.push("E");
@@ -632,7 +633,7 @@ bool LL1::ingresaCadena(vector<string> cadena)
         }
         if (cadena[cont] == pila.top() && pila.top() == "$")
         {
-            cout << "ACEPTADA" << endl;
+            //cout << "ACEPTADA" << endl;
             return true;
             break;
         }
@@ -668,7 +669,7 @@ bool LL1::ingresaCadena(vector<string> cadena)
                 }
                 else if (vtr == "rror" || vtr.size() < 1)
                 {
-                    cout << "NO VALIDA" << endl;
+                    //cout << "NO VALIDA" << endl;
                     cadena_valida = true;
                     break;
                 }

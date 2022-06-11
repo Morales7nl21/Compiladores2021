@@ -27,6 +27,7 @@ string AnalizadorLexico::examinaArchivo()
         cout << "Todo bien al abrir archivo" << endl;
     while (getline(archivo, linea))
     {
+        cout << linea << endl;
         linea = regex_replace(linea, regex("[' ']{2,}"), " "); // se remplazan mas de 2 spacios por uno con regex
         archivoSinEspacios1Linea.append(linea);
     }
@@ -576,13 +577,13 @@ bool AnalizadorSemantico::analizaSemanticamenteAsignacion()
     regex regexOperations("[+|*|/|-]");
 
     bool esAsignacion = false;
-
+    /*
     for (auto const &id : idAAnalizar)
     {
         cout << lexemaYTokenOrdenados[id] << " ";
     }
     cout << endl;
-
+    */
     if ("value" == lexemaYTokenOrdenados[idAAnalizar[1]])
         esAsignacion = true;
 
@@ -595,7 +596,7 @@ bool AnalizadorSemantico::analizaSemanticamenteAsignacion()
             {
                 if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexNumber))
                 {
-                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    //cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
                     return true;
                 }
             }
@@ -603,7 +604,7 @@ bool AnalizadorSemantico::analizaSemanticamenteAsignacion()
             {
                 if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexChar))
                 {
-                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    //cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
                     return true;
                 }
             }
@@ -611,7 +612,7 @@ bool AnalizadorSemantico::analizaSemanticamenteAsignacion()
             {
                 if (regex_match(lexemaYTokenOrdenados[idAAnalizar[2]], regexString))
                 {
-                    cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
+                    //cout << " Declaracion correcta: " << lexemaYTokenOrdenados[idAAnalizar[0]] << "->" << tiposDatoYVariable[lexemaYTokenOrdenados[idAAnalizar[0]]] << "->" << lexemaYTokenOrdenados[idAAnalizar[2]] << endl;
                     return true;
                 }
             }

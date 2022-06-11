@@ -1,6 +1,6 @@
 Init Zero >> ( AsChar c , AsString @ ) () void {
     declare `
-    ComoE AsNumber ;
+    romoE AsNumber ;
     b AsNumber ;
     assign
     ComoE  value 10 ; 
